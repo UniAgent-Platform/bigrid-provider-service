@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.bigraphs.model.provider</groupId>
     <artifactId>bigrid-provider-service</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>bigraphs.bigrid-provider-service</name>
     <description>bigraphs.bigrid-provider-service</description>
     <url/>
@@ -28,7 +28,7 @@
     </scm>
     <properties>
         <java.version>17</java.version>
-        <bigraph.model-provider.version>1.0-SNAPSHOT</bigraph.model-provider.version>
+        <bigraph.model-provider.version>1.0.0</bigraph.model-provider.version>
     </properties>
 
     <repositories>
@@ -72,6 +72,16 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
