@@ -12,20 +12,40 @@
     <artifactId>bigrid-provider-service</artifactId>
     <version>1.0.0</version>
     <name>bigraphs.bigrid-provider-service</name>
-    <description>bigraphs.bigrid-provider-service</description>
+    <description>
+        Reactive RESTful web service for generating parameterizable bigraph-style location models
+        (grids, quadtrees, random points) in JSON or Ecore-compliant XML formats.
+        Ideal for cyber-physical applications and consistency checks.
+    </description>
+
     <url/>
     <licenses>
-        <license/>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
     </licenses>
     <developers>
-        <developer/>
+        <developer>
+            <id>dgrzelak</id>
+            <name>Dominik Grzelak</name>
+            <email>dominik.grzelak@tu-dresden.de</email>
+            <organization>Technische Universität Dresden</organization>
+            <organizationUrl>https://tu-dresden.de/ing/informatik/smt/st</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+2</timezone>
+        </developer>
     </developers>
     <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
+        <connection>scm:git:https://github.com/UniAgent-Platform/bigrid-provider-service.git</connection>
+        <developerConnection>scm:git@github.com:UniAgent-Platform/bigrid-provider-service.git
+        </developerConnection>
+        <url>https://github.com/UniAgent-Platform/bigrid-provider-service</url>
+        <tag>HEAD</tag>
     </scm>
+
     <properties>
         <java.version>17</java.version>
         <bigraph.model-provider.version>1.0.0</bigraph.model-provider.version>
@@ -96,6 +116,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <finalName>bigrid-provider-service</finalName>
+                    <outputDirectory>${project.basedir}/bin</outputDirectory>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

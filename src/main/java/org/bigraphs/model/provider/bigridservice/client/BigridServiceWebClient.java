@@ -1,6 +1,7 @@
 package org.bigraphs.model.provider.bigridservice.client;
 
 import org.bigraphs.model.provider.bigridservice.data.PointData;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -16,8 +17,16 @@ import java.util.stream.Collectors;
 @Service
 public class BigridServiceWebClient {
 
-    // TODO make configurable
-    private final WebClient client = WebClient.create("http://localhost:8080");
+    private final WebClient client;
+
+    // Constructor injection for dynamic address and port
+    public BigridServiceWebClient(
+            @Value("${server.address:localhost}") String serverAddress,
+            @Value("${server.port:8080}") int serverPort
+    ) {
+        String baseUrl = String.format("http://%s:%d", serverAddress, serverPort);
+        this.client = WebClient.create(baseUrl);
+    }
 
     public Mono<String> fetchRandomPoints() {
         return client.get()

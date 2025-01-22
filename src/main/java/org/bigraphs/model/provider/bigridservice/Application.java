@@ -16,7 +16,7 @@ public class Application {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
         BigridServiceWebClient testClient = context.getBean(BigridServiceWebClient.class);
-        // We need to block for the content here or the JVM might exit before the message is logged
-        System.out.println(">>> response (random points) = " + testClient.fetchRandomPoints().block());
+        // Block for the content or the JVM might exit before the message is logged
+        System.out.println(">>> test response (random points) = " + testClient.fetchRandomPoints().block());
     }
 }

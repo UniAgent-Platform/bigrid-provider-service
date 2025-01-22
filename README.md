@@ -8,7 +8,8 @@ This project implements a reactive RESTful web service that provides various big
 
 as JSON, or as XML.
 
-These location models are usually employed in reactive bigraph programs implementing cyber-physical applications, or for cyber-physical consistency checking.
+Location models are typically used in reactive bigraph programs
+that support cyber-physical applications or facilitate cyber-physical consistency checks.
 
 ### Features
 
@@ -16,11 +17,14 @@ These location models are usually employed in reactive bigraph programs implemen
 
 The following location models are currently supported:
 
-- grids, quadtrees, …
+- Points (randomly within a given boundary)
+- Uniform n×m grids (points are evenly spaced)
+- Quadtrees with boundary
 
 These models can be parameterized (e.g., number of cells per row, maximum depth, …).
 
 #### Ecore-compliant Models
+
 Model output (XML) is realized using the Ecore standard from the Eclipse Modeling Framework (EMF).
 Specifically, all bigraphical Ecore-based location models conform to [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel).
 
@@ -94,3 +98,37 @@ Example:
 
 - http://localhost:8080/generate/quadtree?format=json&maxTreeDepth=4&maxPointsPerLeaf=1
 
+## Build and Start Service
+
+Building:
+```
+mvn clean package
+```
+
+Running:
+```shell
+java -jar ./bin/bigrid-provider-service.jar
+```
+
+### Configuration
+
+#### Server Port
+
+Default: 8080
+
+```shell
+# Command-Line
+java -jar bigrid-provider-service.jar --server.port=9090
+# System Property
+java -Dserver.port=9090 -jar bigrid-provider-service.jar
+# Environment Variable
+export SERVER_PORT=9090
+```
+
+**Order of Priority**
+
+Spring Boot evaluates properties in this order:
+- Command-line arguments (the highest priority)
+- Environment variables
+- `application.properties`
+- Default configuration (the lowest priority)
