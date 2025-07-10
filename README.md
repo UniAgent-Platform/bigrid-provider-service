@@ -1,5 +1,10 @@
 # Bigrid Provider Service
 
+Latest Version: `v1.1.0`
+
+- See how to [Build and Start the Service](#Build-and-Start-the-Service)
+- See [RESTful Web Endpoints](#RESTful-Web-Endpoints) to so how to use the service
+
 ## Introduction
 
 This project implements a reactive RESTful web service that provides various bigraph-style location models:
@@ -185,14 +190,14 @@ Arguments:
 
 
 
-## Build and Start Service
+## Build and Start the Service
 
-Building:
+**1. Building:**
 ```
 mvn clean package
 ```
 
-Running:
+**2. Running:**
 ```shell
 java -jar ./bin/bigrid-provider-service.jar
 ```
