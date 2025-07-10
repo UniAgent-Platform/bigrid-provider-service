@@ -188,3 +188,19 @@ Spring Boot evaluates properties in this order:
 - Environment variables
 - `application.properties`
 - Default configuration (the lowest priority)
+
+## Contributing
+
+Contributions are welcomed from the open source community! 
+To get started:
+
+- See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to propose changes or submit pull requests.
+
+- Please review our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) to foster an inclusive and respectful environment.
+
+
+## License
+
+This project is licensed under the Apache License 2.0.
+
+You are free to use, modify, and distribute this software in accordance with the license terms.
