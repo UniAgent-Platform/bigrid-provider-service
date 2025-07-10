@@ -1,6 +1,6 @@
 package org.bigraphs.model.provider.bigridservice.client;
 
-import org.bigraphs.model.provider.bigridservice.data.PointData;
+import org.bigraphs.model.provider.bigridservice.data.request.PointData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;

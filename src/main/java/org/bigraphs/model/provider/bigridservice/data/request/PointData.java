@@ -1,4 +1,4 @@
-package org.bigraphs.model.provider.bigridservice.data;
+package org.bigraphs.model.provider.bigridservice.data.request;
 
 import lombok.Getter;
 import lombok.Setter;

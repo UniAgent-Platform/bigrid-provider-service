@@ -1,6 +1,6 @@
 package org.bigraphs.model.provider.bigridservice.handler;
 
-import org.bigraphs.model.provider.bigridservice.data.PointData;
+import org.bigraphs.model.provider.bigridservice.data.request.PointData;
 import org.bigraphs.model.provider.spatial.quadtree.impl.QuadtreeImpl;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -15,7 +15,7 @@ import java.util.List;
  * @author Dominik Grzelak
  */
 @Component
-public class PointHandler extends ServiceHandlerSupport {
+public class PointHandler extends BiSpatialModelHandler {
 
     /**
      * Create random 2D points within a given boundary ((x,y), (width, height)).

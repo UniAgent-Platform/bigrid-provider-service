@@ -1,6 +1,6 @@
 package org.bigraphs.model.provider.bigridservice.router;
 
-import org.bigraphs.model.provider.bigridservice.handler.BGridHandler;
+import org.bigraphs.model.provider.bigridservice.handler.BiSpatialModelHandler;
 import org.bigraphs.model.provider.bigridservice.handler.BQuadtreeHandler;
 import org.bigraphs.model.provider.bigridservice.handler.PointHandler;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +14,15 @@ import org.springframework.web.reactive.function.server.ServerResponse;
  */
 @Configuration
 public class RouterConfig {
+
+    // The Bigraph MetaModel ("Bi-spatial MetaModel")
+
+    @Bean
+    public RouterFunction<ServerResponse> get_bigraph_metamodel(BiSpatialModelHandler handler) {
+        return RouterFunctions.route()
+                .GET("/generate/metamodel", handler::getOrCreateBigraphMetaModel)
+                .build();
+    }
 
     // Points
 
@@ -34,16 +43,25 @@ public class RouterConfig {
     // Bigrid
 
     @Bean
-    public RouterFunction<ServerResponse> gen_bigrid_default(BGridHandler handler) {
+    public RouterFunction<ServerResponse> gen_bigrid_default(BiSpatialModelHandler handler) {
         return RouterFunctions.route()
                 .GET("/generate/bigrid", handler::createUniformBigridDefault)
                 .build();
     }
 
     @Bean
-    public RouterFunction<ServerResponse> gen_bigrid(BGridHandler handler) {
+    public RouterFunction<ServerResponse> gen_bigrid(BiSpatialModelHandler handler) {
         return RouterFunctions.route()
                 .POST("/generate/bigrid", handler::createUniformBigrid)
+                .build();
+    }
+
+    // Interpolation
+
+    @Bean
+    public RouterFunction<ServerResponse> gen_interpolated_bigraph(BiSpatialModelHandler handler) {
+        return RouterFunctions.route()
+                .POST("/generate/interpolated", handler::createInterpolatedBigraph)
                 .build();
     }
 

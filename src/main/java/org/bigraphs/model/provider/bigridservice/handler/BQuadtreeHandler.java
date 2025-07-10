@@ -3,7 +3,7 @@ package org.bigraphs.model.provider.bigridservice.handler;
 import org.bigraphs.framework.core.BigraphFileModelManagement;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.model.provider.base.BLocationModelData;
-import org.bigraphs.model.provider.bigridservice.data.PointDataWithBoundary;
+import org.bigraphs.model.provider.bigridservice.data.request.PointDataWithBoundaryRequest;
 import org.bigraphs.model.provider.bigridservice.data.ResponseData_GenerateQuadtree;
 import org.bigraphs.model.provider.spatial.bigrid.BLocationModelDataFactory;
 import org.bigraphs.model.provider.spatial.bigrid.BiGridProvider;
@@ -24,10 +24,10 @@ import java.util.List;
  * @author Dominik Grzelak
  */
 @Component
-public class BQuadtreeHandler extends ServiceHandlerSupport {
+public class BQuadtreeHandler extends BiSpatialModelHandler {
 
     public Mono<ServerResponse> createBQuadtree(ServerRequest request) {
-        Mono<PointDataWithBoundary> pointDataMono = request.bodyToMono(PointDataWithBoundary.class);
+        Mono<PointDataWithBoundaryRequest> pointDataMono = request.bodyToMono(PointDataWithBoundaryRequest.class);
         String format = request.queryParam("format").orElse("json");
         int maxTreeDepth = parseQueryParamAsInt(request, "maxTreeDepth", 4);
         int maxPointsPerLeaf = parseQueryParamAsInt(request, "maxPointsPerLeaf", 1);

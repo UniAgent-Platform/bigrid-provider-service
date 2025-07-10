@@ -4,9 +4,9 @@
 
 This project implements a reactive RESTful web service that provides various bigraph-style location models:
 
-- grids, quadtrees, etc.
+- grids, quadtrees, lines, etc.
 
-as JSON, or as XML.
+as XML (Ecore-compliant bigraph models), or as JSON (custom).
 
 Location models are typically used in reactive bigraph programs
 that support cyber-physical applications or facilitate cyber-physical consistency checks.
@@ -20,6 +20,7 @@ The following location models are currently supported:
 - Points (randomly within a given boundary)
 - Uniform n×m grids (points are evenly spaced)
 - Quadtrees with boundary
+- Lines (Interpolated with stepsize)
 
 These models can be parameterized (e.g., number of cells per row, maximum depth, …).
 
@@ -28,13 +29,21 @@ These models can be parameterized (e.g., number of cells per row, maximum depth,
 Model output (XML) is realized using the Ecore standard from the Eclipse Modeling Framework (EMF).
 Specifically, all bigraphical Ecore-based location models conform to [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel).
 
-#### ROS-compliant Service Implementation (⚠️ WIP)
-
-This service implementation is ROS2-compatible.
-A dedicated ROS2 package manages this server and makes the web endpoints
-available as ROS services to be used in native ROS environments.
-
 ## RESTful Web Endpoints
+
+### Retrieve the Bi-Spatial Metamodel
+
+You can retrieve the Ecore-based metamodel used for all bi-spatial location models. 
+This metamodel defines the structure and types of the instance models (e.g., grids, interpolated trajectories) that your application will load or validate.
+
+```shell
+curl http://localhost:8080/generate/metamodel?format=xml
+```
+
+This metamodel is required to:
+- Validate location-based bigraph instance models.
+- Enable model-driven tools (e.g., EMF, Eclipse) to work with generated content.
+- Maintain consistency across different cyber-physical space representations.
 
 ### Create Random Points
 
@@ -97,6 +106,53 @@ Arguments:
 Example:
 
 - http://localhost:8080/generate/quadtree?format=json&maxTreeDepth=4&maxPointsPerLeaf=1
+
+### Interpolate Points
+
+```shell
+curl -X POST http://localhost:8080/generate/interpolated?format=xml \
+  -H "Content-Type: application/json" \
+  -d '{
+    "points": [
+        {"x": 0, "y": 0},
+        {"x": 1, "y": 1},
+        {"x": 2, "y": 2}
+    ],
+    "stepSizeX": 0.25,
+    "stepSizeY": 0.25
+  }'
+```
+
+Arguments:
+
+- JSON (Default): `?format=json`
+
+### Generate a Uniform Bi-Spatial Grid
+
+These endpoints allow you to generate a **uniform grid-based bi-spatial bigraph model**, which serves as a spatial structure of discrete locations. The grid can be used as a base layout for simulation, visualization, or as part of a digital twin model.
+
+Example: Generate a **default 3x3 grid** with step size 1.0 in both directions, where the origin is at (x,y) = (0,0):
+
+```shell
+curl http://localhost:8080/generate/bigrid
+curl "http://localhost:8080/generate/bigrid?rows=4&cols=2&format=xml"
+```
+
+To adjust the default values:
+
+```shell
+curl -X POST http://localhost:8080/generate/bigrid \
+  -H "Content-Type: application/json" \
+  -d '{"x":0,"y":0,"stepSizeX":1.5,"stepSizeY":2.0}'
+```
+
+Arguments:
+
+- Rows (default: `3`): `?rows=3`
+- Columns (default: `3`): `?cols=3`
+- Format (default: JSON): `?format=json` or `?format=xml`
+
+
 
 ## Build and Start Service
 
