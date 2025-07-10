@@ -127,6 +127,37 @@ Arguments:
 
 - JSON (Default): `?format=json`
 
+### Generate a Bi-Spatial Convex Shape
+
+This endpoint creates a bi-spatial bigraph model based on a custom list of 2D points that define a convex polygon. 
+The interior of the shape is rasterized using a specified step size, and a spatial location node is generated for each rasterized point.
+
+This generates a convex bi-spatial structure from a list of polygon vertices:
+```shell
+curl -X POST http://localhost:8080/generate/convex \
+  -H "Content-Type: application/json" \
+  -d '{
+        "stepSize": 0.25,
+        "points": [
+          { "x": 0.0, "y": 0.0 },
+          { "x": -1.24, "y": 0.58 },
+          { "x": 2.86, "y": 2.93 },
+          { "x": 3.08, "y": 0.0 }
+        ]
+      }'
+```
+
+Arguments:
+
+- Step Size (required): included in body → `"stepSize": 0.25`
+- Format (default: XML): `?format=xml` or `?format=json`
+
+Use Cases:
+
+- Defining irregular regions of interest in a spatial simulation.
+- Modeling bounded areas in drone or robot navigation maps.
+- Loading custom-shaped digital twin spaces into your application.
+
 ### Generate a Uniform Bi-Spatial Grid
 
 These endpoints allow you to generate a **uniform grid-based bi-spatial bigraph model**, which serves as a spatial structure of discrete locations. The grid can be used as a base layout for simulation, visualization, or as part of a digital twin model.

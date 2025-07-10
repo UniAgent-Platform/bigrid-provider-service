@@ -15,7 +15,7 @@ import java.util.List;
  * @author Dominik Grzelak
  */
 @Component
-public class PointHandler extends BiSpatialModelHandler {
+public class PointHandler extends ServiceHandlerSupport {
 
     /**
      * Create random 2D points within a given boundary ((x,y), (width, height)).

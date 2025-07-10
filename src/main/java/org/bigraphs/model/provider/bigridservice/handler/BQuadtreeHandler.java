@@ -24,7 +24,7 @@ import java.util.List;
  * @author Dominik Grzelak
  */
 @Component
-public class BQuadtreeHandler extends BiSpatialModelHandler {
+public class BQuadtreeHandler extends ServiceHandlerSupport {
 
     public Mono<ServerResponse> createBQuadtree(ServerRequest request) {
         Mono<PointDataWithBoundaryRequest> pointDataMono = request.bodyToMono(PointDataWithBoundaryRequest.class);

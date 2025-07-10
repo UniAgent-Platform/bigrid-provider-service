@@ -40,6 +40,15 @@ public class RouterConfig {
                 .build();
     }
 
+    // Convex Shapes
+
+    @Bean
+    public RouterFunction<ServerResponse> gen_convex_shape(BiSpatialModelHandler handler) {
+        return RouterFunctions.route()
+                .POST("/generate/convex", handler::createConvexShape)
+                .build();
+    }
+
     // Bigrid
 
     @Bean

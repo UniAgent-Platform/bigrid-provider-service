@@ -4,12 +4,11 @@ import org.bigraphs.framework.core.BigraphFileModelManagement;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
 import org.bigraphs.model.provider.base.BLocationModelData;
+import org.bigraphs.model.provider.bigridservice.data.request.ConvexShapeRequest;
 import org.bigraphs.model.provider.bigridservice.data.request.GridSpecRequest;
 import org.bigraphs.model.provider.bigridservice.data.ResponseData_GenerateGrid;
 import org.bigraphs.model.provider.bigridservice.data.request.InterpolationRequest;
-import org.bigraphs.model.provider.spatial.bigrid.BLocationModelDataFactory;
-import org.bigraphs.model.provider.spatial.bigrid.BiGridProvider;
-import org.bigraphs.model.provider.spatial.bigrid.LinearInterpolationBuilder;
+import org.bigraphs.model.provider.spatial.bigrid.*;
 import org.bigraphs.model.provider.spatial.signature.BiSpaceSignatureProvider;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -67,7 +66,7 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
 
     public Mono<ServerResponse> createUniformBigrid(ServerRequest request) {
         Mono<GridSpecRequest> gridSpecMono = request.bodyToMono(GridSpecRequest.class);
-        String format = request.queryParam("format").orElse("json");
+        String format = request.queryParam("format").orElse("xml");
         int rows = parseQueryParamAsInt(request, "rows", 3);
         int cols = parseQueryParamAsInt(request, "cols", 3);
 
@@ -77,7 +76,7 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
     }
 
     public Mono<ServerResponse> createUniformBigridDefault(ServerRequest request) {
-        String format = request.queryParam("format").orElse("json");
+        String format = request.queryParam("format").orElse("xml");
         int rows = parseQueryParamAsInt(request, "rows", 3);
         int cols = parseQueryParamAsInt(request, "cols", 3);
         GridSpecRequest gridSpec = new GridSpecRequest(0, 0, 1, 1);
@@ -112,13 +111,51 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
                 .body(Mono.just(response), ResponseData_GenerateGrid.class);
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // Bi-Spatial Bigraph with Convex Shape
+    //------------------------------------------------------------------------------------------------------------------
+
+    public Mono<ServerResponse> createConvexShape(ServerRequest request) {
+        String format = request.queryParam("format").orElse("xml");
+
+        Mono<ConvexShapeRequest> bodyMono = request.bodyToMono(ConvexShapeRequest.class);
+
+        return bodyMono.flatMap(convexRequest -> {
+            try {
+                List<Point2D.Float> pointList = convexRequest.getPoints();
+                float stepSize = convexRequest.getStepSize();
+
+                PureBigraph bigraph = ConvexShapeBuilder.generateAsSingle(
+                        pointList, stepSize, BiGridElementFactory.create()
+                );
+
+                if ("xml".equalsIgnoreCase(format)) {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, out);
+
+                    return ServerResponse.ok()
+                            .contentType(MediaType.APPLICATION_XML)
+                            .bodyValue(out.toString());
+                } else {
+                    // ToDo
+                    String json = "ToDo: BLocationModelDataFactory.toJson(bigraph);";
+                    return ServerResponse.ok()
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(json);
+                }
+            } catch (Exception e) {
+                return Mono.error(new RuntimeException("Failed to generate convex bigraph", e));
+            }
+        });
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     // Interpolation
     // -----------------------------------------------------------------------------------------------------------------
 
     public Mono<ServerResponse> createInterpolatedBigraph(ServerRequest request) {
         Mono<InterpolationRequest> inputMono = request.bodyToMono(InterpolationRequest.class);
-        String format = request.queryParam("format").orElse("json");
+        String format = request.queryParam("format").orElse("xml");
 
         return inputMono.flatMap(input -> {
             try {
