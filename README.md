@@ -1,6 +1,6 @@
 # Bigrid Provider Service
 
-Latest Version: `v1.1.0`
+Latest Version: `v1.2.0`
 
 - See how to [Build and Start the Service](#Build-and-Start-the-Service)
 - See [RESTful Web Endpoints](#RESTful-Web-Endpoints) on how to use the service
