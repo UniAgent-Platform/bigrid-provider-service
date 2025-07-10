@@ -3,7 +3,7 @@
 Latest Version: `v1.1.0`
 
 - See how to [Build and Start the Service](#Build-and-Start-the-Service)
-- See [RESTful Web Endpoints](#RESTful-Web-Endpoints) to so how to use the service
+- See [RESTful Web Endpoints](#RESTful-Web-Endpoints) on how to use the service
 
 ## Introduction
 
