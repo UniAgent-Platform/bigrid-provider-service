@@ -48,21 +48,35 @@
 
     <properties>
         <java.version>17</java.version>
-        <bigraph.model-provider.version>1.1.0</bigraph.model-provider.version>
+        <bigraph.model-provider.version>1.1.1</bigraph.model-provider.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.bigraphs.model.provider</groupId>
             <artifactId>model-provider-core</artifactId>
             <version>${bigraph.model-provider.version}</version>
+            <exclusions>
+                <!-- Because choco-solver contains old protoc version -->
+                <exclusion>
+                    <groupId>org.bigraphs.framework</groupId>
+                    <artifactId>bigraph-simulation</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.swarmwalker.messages</groupId>
+            <artifactId>protobuf-messages</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -95,6 +109,21 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.swarmwalker.messages</groupId>
+                <artifactId>protobuf-messages</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>4.31.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>
