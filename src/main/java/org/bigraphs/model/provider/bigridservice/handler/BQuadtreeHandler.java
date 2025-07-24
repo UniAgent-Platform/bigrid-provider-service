@@ -13,11 +13,13 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.swarmwalker.messages.BiGrid;
 import reactor.core.publisher.Mono;
 
 import java.awt.geom.Point2D;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -27,10 +29,11 @@ import java.util.List;
 public class BQuadtreeHandler extends ServiceHandlerSupport {
 
     public Mono<ServerResponse> createBQuadtree(ServerRequest request) {
-        Mono<PointDataWithBoundaryRequest> pointDataMono = request.bodyToMono(PointDataWithBoundaryRequest.class);
-        String format = request.queryParam("format").orElse("json");
+        String format = request.queryParam("format").orElse("xml");
         int maxTreeDepth = parseQueryParamAsInt(request, "maxTreeDepth", 4);
         int maxPointsPerLeaf = parseQueryParamAsInt(request, "maxPointsPerLeaf", 1);
+
+        Mono<PointDataWithBoundaryRequest> pointDataMono = request.bodyToMono(PointDataWithBoundaryRequest.class);
 
         return pointDataMono.flatMap(pointBoundaryProduct -> {
             List<Point2D.Double> pointData = pointBoundaryProduct.getPointData().getPoints();
@@ -39,7 +42,6 @@ public class BQuadtreeHandler extends ServiceHandlerSupport {
             List<Point2D.Double> pointsOmitted = new ArrayList<>();
             List<Point2D.Double> pointsAdded = new ArrayList<>();
             if (pointData == null) {
-//                System.out.println("PointsData is null!");
                 return Mono.error(new RuntimeException("PointsData is null!"));
             }
             pointData.forEach(pt -> {
@@ -64,14 +66,25 @@ public class BQuadtreeHandler extends ServiceHandlerSupport {
             responseData.setPointsOmitted(pointsOmitted);
             try {
                 if ("xml".equalsIgnoreCase(format)) {
+                    responseData.setMimeType(MediaType.APPLICATION_XML.toString());
+
                     BiGridProvider provider = new BiGridProvider(bLMD);
                     PureBigraph bigrid = provider.getBigraph();
                     ByteArrayOutputStream textStream = new ByteArrayOutputStream();
                     BigraphFileModelManagement.Store.exportAsInstanceModel(bigrid, textStream);
                     responseData.setContent(textStream.toString());
-                } else {
+                } else if ("json".equalsIgnoreCase(format)) {
+                    responseData.setMimeType(MediaType.APPLICATION_JSON.toString());
+
                     String json = BLocationModelDataFactory.toJson(bLMD);
                     responseData.setContent(json);
+                } else if ("protobuf".equalsIgnoreCase(format)) {
+                    responseData.setMimeType(MediaType.parseMediaType("application/x-protobuf").toString());
+
+                    BiGrid gridMessage = BLocationToBiGridConverter.convert(bLMD);
+                    byte[] protoBytes = gridMessage.toByteArray();
+                    String base64 = Base64.getEncoder().encodeToString(protoBytes);
+                    responseData.setContent(base64);
                 }
             } catch (Exception e) {
                 return Mono.error(new RuntimeException(e));

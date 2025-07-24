@@ -14,10 +14,12 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.swarmwalker.messages.BiGrid;
 import reactor.core.publisher.Mono;
 
 import java.awt.geom.Point2D;
 import java.io.ByteArrayOutputStream;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,14 +95,24 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
 
         try {
             if ("xml".equalsIgnoreCase(format)) {
+                response.setMimeType(MediaType.APPLICATION_XML.toString());
                 BiGridProvider provider = new BiGridProvider(bLMD);
                 PureBigraph bigrid = provider.getBigraph();
                 ByteArrayOutputStream textStream = new ByteArrayOutputStream();
                 BigraphFileModelManagement.Store.exportAsInstanceModel(bigrid, textStream);
                 response.setContent(textStream.toString());
-            } else {
+            } else if ("json".equalsIgnoreCase(format)) {
+                response.setMimeType(MediaType.APPLICATION_JSON.toString());
                 String json = BLocationModelDataFactory.toJson(bLMD);
                 response.setContent(json);
+            } else if ("protobuf".equalsIgnoreCase(format)) {
+                response.setMimeType(MediaType.parseMediaType("application/x-protobuf").toString());
+                BiGrid gridMessage = BLocationToBiGridConverter.convert(bLMD);
+                // (!) Important: Encoding Protobuf payload to Base64
+                // Because Protobuf is binary and putting it directly in a JSON string field will corrupt the data
+                byte[] protoBytes = gridMessage.toByteArray();
+                String base64 = Base64.getEncoder().encodeToString(protoBytes);
+                response.setContent(base64);
             }
         } catch (Exception e) {
             return Mono.error(new RuntimeException(e));
@@ -121,31 +133,40 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
         Mono<ConvexShapeRequest> bodyMono = request.bodyToMono(ConvexShapeRequest.class);
 
         return bodyMono.flatMap(convexRequest -> {
+            ResponseData_GenerateGrid response = new ResponseData_GenerateGrid();
             try {
                 List<Point2D.Float> pointList = convexRequest.getPoints();
                 float stepSize = convexRequest.getStepSize();
-
                 PureBigraph bigraph = ConvexShapeBuilder.generateAsSingle(
                         pointList, stepSize, BiGridElementFactory.create()
                 );
 
                 if ("xml".equalsIgnoreCase(format)) {
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, out);
+                    response.setMimeType(MediaType.APPLICATION_XML.toString());
 
-                    return ServerResponse.ok()
-                            .contentType(MediaType.APPLICATION_XML)
-                            .bodyValue(out.toString());
-                } else {
+                    ByteArrayOutputStream textStream = new ByteArrayOutputStream();
+                    BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, textStream);
+                    response.setContent(textStream.toString());
+                } else if ("json".equalsIgnoreCase(format)) {
+                    response.setMimeType(MediaType.APPLICATION_JSON.toString());
+
                     // ToDo
                     String json = "ToDo: BLocationModelDataFactory.toJson(bigraph);";
-                    return ServerResponse.ok()
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .bodyValue(json);
+                    response.setContent(json);
+                } else if ("protobuf".equalsIgnoreCase(format)) {
+                    response.setMimeType(MediaType.parseMediaType("application/x-protobuf").toString());
+
+                    BiGrid gridMessage = BLocationToBiGridConverter.convertPureSpatialBigraph(bigraph, stepSize, stepSize);
+                    byte[] protoBytes = gridMessage.toByteArray();
+                    String base64 = Base64.getEncoder().encodeToString(protoBytes);
+                    response.setContent(base64);
                 }
             } catch (Exception e) {
                 return Mono.error(new RuntimeException("Failed to generate convex bigraph", e));
             }
+            return ServerResponse.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(Mono.just(response), ResponseData_GenerateGrid.class);
         });
     }
 
@@ -158,8 +179,8 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
         String format = request.queryParam("format").orElse("xml");
 
         return inputMono.flatMap(input -> {
+            ResponseData_GenerateGrid response = new ResponseData_GenerateGrid();
             try {
-                // Convert DTO to Point2D.Float if needed
                 List<Point2D.Float> pointList = input.points.stream()
                         .map(p -> new Point2D.Float(p.x, p.y))
                         .collect(Collectors.toList());
@@ -169,21 +190,31 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
                 );
 
                 if ("xml".equalsIgnoreCase(format)) {
+                    response.setMimeType(MediaType.APPLICATION_XML.toString());
+
                     ByteArrayOutputStream textStream = new ByteArrayOutputStream();
                     BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, textStream);
-                    return ServerResponse.ok()
-                            .contentType(MediaType.APPLICATION_XML)
-                            .bodyValue(textStream.toString());
-                } else {
+                    response.setContent(textStream.toString());
+                } else if ("json".equalsIgnoreCase(format)) {
+                    response.setMimeType(MediaType.APPLICATION_JSON.toString());
+
                     // ToDo
-                    String json = "TODO: bigraph.toString();";
-                    return ServerResponse.ok()
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .bodyValue(json);
+                    String json = "ToDo: BLocationModelDataFactory.toJson(bigraph);";
+                    response.setContent(json);
+                } else if ("protobuf".equalsIgnoreCase(format)) {
+                    response.setMimeType(MediaType.parseMediaType("application/x-protobuf").toString());
+
+                    BiGrid gridMessage = BLocationToBiGridConverter.convertPureSpatialBigraph(bigraph, input.stepSizeX, input.stepSizeY);
+                    byte[] protoBytes = gridMessage.toByteArray();
+                    String base64 = Base64.getEncoder().encodeToString(protoBytes);
+                    response.setContent(base64);
                 }
             } catch (Exception e) {
                 return Mono.error(new RuntimeException("Failed to interpolate bigraph", e));
             }
+            return ServerResponse.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(Mono.just(response), ResponseData_GenerateGrid.class);
         });
     }
 }

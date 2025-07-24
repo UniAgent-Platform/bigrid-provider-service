@@ -42,7 +42,7 @@ You can retrieve the Ecore-based metamodel used for all bi-spatial location mode
 This metamodel defines the structure and types of the instance models (e.g., grids, interpolated trajectories) that your application will load or validate.
 
 ```shell
-curl http://localhost:8080/generate/metamodel?format=xml
+$ curl http://localhost:8080/generate/metamodel?format=xml
 ```
 
 This metamodel is required to:
@@ -55,14 +55,14 @@ This metamodel is required to:
 Within a default 2D rectangle (boundary) from (0,0) to (10,10):
 
 ```shell
-curl "http://localhost:8080/generate/points/random?pointCount=10" \
+$ curl "http://localhost:8080/generate/points/random?pointCount=10" \
 -H "Content-Type: application/json"
 ```
 
 Within a given rectangular boundary:
 
 ```shell
-curl -X POST "http://localhost:8080/generate/points/random?pointCount=15" \
+$ curl -X POST "http://localhost:8080/generate/points/random?pointCount=15" \
 -H "Content-Type: application/json" \
 -d '{
     "x": 0.0,
@@ -82,7 +82,26 @@ You have to supply points of the form as shown in the example.
 The output format can be specified via the format argument.
 
 ```shell
-curl -X POST "http://localhost:8080/generate/quadtree?maxTreeDepth=4&format=xml" \
+$ curl -X POST "http://localhost:8080/generate/quadtree?maxTreeDepth=4&format=xml" \
+-H "Content-Type: application/json" \
+-d '{
+    "boundary": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 10.0,
+        "height": 10.0
+    },
+    "pointData": {
+          "points": [
+            {"x": 0.2, "y": 0.2},
+            {"x": 1.0, "y": 2.0},
+            {"x": 3.0, "y": 4.0}
+          ]
+    }
+}'
+
+# Protobuf Output Format
+$ curl -X POST "http://localhost:8080/generate/quadtree?maxTreeDepth=4&format=protobuf" \
 -H "Content-Type: application/json" \
 -d '{
     "boundary": {
@@ -101,21 +120,35 @@ curl -X POST "http://localhost:8080/generate/quadtree?maxTreeDepth=4&format=xml"
 }'
 ```
 
-Arguments:
+**Arguments:**
 
-- JSON (Default): `?format=json`
-- XML (Ecore standard): `?format=xml`
+- Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
 - Configurable max points before subdivision: `?maxTreeDepth=<INT>`
 - Configurable max depth of the quadtree: `?maxPointsPerLeaf=<INT>`
 
-Example:
+**Example:**
 
-- http://localhost:8080/generate/quadtree?format=json&maxTreeDepth=4&maxPointsPerLeaf=1
+```shell
+$ curl http://localhost:8080/generate/quadtree?format=json&maxTreeDepth=4&maxPointsPerLeaf=1
+```
 
 ### Interpolate Points
 
 ```shell
-curl -X POST http://localhost:8080/generate/interpolated?format=xml \
+$ curl -X POST http://localhost:8080/generate/interpolated?format=xml \
+  -H "Content-Type: application/json" \
+  -d '{
+    "points": [
+        {"x": 0, "y": 0},
+        {"x": 1, "y": 1},
+        {"x": 2, "y": 2}
+    ],
+    "stepSizeX": 0.25,
+    "stepSizeY": 0.25
+  }'
+  
+# Protobuf Messages format
+$ curl -X POST http://localhost:8080/generate/interpolated?format=protobuf \
   -H "Content-Type: application/json" \
   -d '{
     "points": [
@@ -128,9 +161,9 @@ curl -X POST http://localhost:8080/generate/interpolated?format=xml \
   }'
 ```
 
-Arguments:
+**Arguments:**
 
-- JSON (Default): `?format=json`
+- Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
 
 ### Generate a Bi-Spatial Convex Shape
 
@@ -139,7 +172,20 @@ The interior of the shape is rasterized using a specified step size, and a spati
 
 This generates a convex bi-spatial structure from a list of polygon vertices:
 ```shell
-curl -X POST http://localhost:8080/generate/convex \
+$ curl -X POST http://localhost:8080/generate/convex \
+  -H "Content-Type: application/json" \
+  -d '{
+        "stepSize": 0.25,
+        "points": [
+          { "x": 0.0, "y": 0.0 },
+          { "x": -1.24, "y": 0.58 },
+          { "x": 2.86, "y": 2.93 },
+          { "x": 3.08, "y": 0.0 }
+        ]
+      }'
+      
+# Protobuf Messages format
+$ curl -X POST http://localhost:8080/generate/convex?format=protobuf \
   -H "Content-Type: application/json" \
   -d '{
         "stepSize": 0.25,
@@ -152,12 +198,15 @@ curl -X POST http://localhost:8080/generate/convex \
       }'
 ```
 
-Arguments:
 
+**Arguments:**
+
+- Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
 - Step Size (required): included in body → `"stepSize": 0.25`
-- Format (default: XML): `?format=xml` or `?format=json`
 
-Use Cases:
+
+
+**Use Cases:**
 
 - Defining irregular regions of interest in a spatial simulation.
 - Modeling bounded areas in drone or robot navigation maps.
@@ -170,51 +219,61 @@ These endpoints allow you to generate a **uniform grid-based bi-spatial bigraph 
 Example: Generate a **default 3x3 grid** with step size 1.0 in both directions, where the origin is at (x,y) = (0,0):
 
 ```shell
-curl http://localhost:8080/generate/bigrid
-curl "http://localhost:8080/generate/bigrid?rows=4&cols=2&format=xml"
+$ curl http://localhost:8080/generate/bigrid
+$ curl "http://localhost:8080/generate/bigrid?rows=4&cols=2&format=xml"
+$ curl "http://localhost:8080/generate/bigrid?rows=2&cols=2&format=protobuf"
 ```
 
 To adjust the default values:
 
 ```shell
-curl -X POST http://localhost:8080/generate/bigrid \
+$ curl -X POST http://localhost:8080/generate/bigrid \
   -H "Content-Type: application/json" \
   -d '{"x":0,"y":0,"stepSizeX":1.5,"stepSizeY":2.0}'
 ```
 
-Arguments:
+**Arguments:**
 
+- Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
 - Rows (default: `3`): `?rows=3`
 - Columns (default: `3`): `?cols=3`
-- Format (default: JSON): `?format=json` or `?format=xml`
 
 
+## How to Build and Start the Service
 
-## Build and Start the Service
+**0. Prerequisites:**
+
+You have to install this dependency on your system (locally):
+- https://git-st.inf.tu-dresden.de/swarmwalker/protobuf-messages
 
 **1. Building:**
 ```
-mvn clean package
+$ ./mvnw clean package
 ```
 
 **2. Running:**
 ```shell
-java -jar ./bin/bigrid-provider-service.jar
+$ java -jar ./bin/bigrid-provider-service.jar
 ```
 
 ### Configuration
 
-#### Server Port
+| Parameter | Default | Command-Line         | System Property      | Environment Variable      |
+|-----------|---------|----------------------|----------------------|---------------------------|
+| Port      | 8080    | `--server.port=9090` | `-Dserver.port=9090` | `export SERVER_PORT=9090` |
 
-Default: 8080
+
+**Example:**
 
 ```shell
 # Command-Line
-java -jar bigrid-provider-service.jar --server.port=9090
+$ java -jar bigrid-provider-service.jar --server.port=9090
+
 # System Property
-java -Dserver.port=9090 -jar bigrid-provider-service.jar
+$ java -Dserver.port=9090 -jar bigrid-provider-service.jar
+
 # Environment Variable
-export SERVER_PORT=9090
+$ export SERVER_PORT=9090
 ```
 
 **Order of Priority**

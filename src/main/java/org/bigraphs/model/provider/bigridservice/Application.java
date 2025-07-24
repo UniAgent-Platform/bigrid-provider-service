@@ -16,6 +16,6 @@ public class Application {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
         BigridServiceWebClient testClient = context.getBean(BigridServiceWebClient.class);
-        System.out.println(">>> test response (random points) = " + testClient.fetchRandomPoints().block());
+        System.out.println(">>> Check response (random points) = " + testClient.fetchRandomPoints().block());
     }
 }

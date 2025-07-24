@@ -5,9 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.awt.geom.Point2D;
-import java.util.List;
-
 /**
  * @author Dominik Grzelak
  */
@@ -15,8 +12,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseData_GenerateGrid {
-    private String content;
+public class ResponseData_GenerateGrid extends BaseResponseData {
     private int rows;
     private int cols;
 }
