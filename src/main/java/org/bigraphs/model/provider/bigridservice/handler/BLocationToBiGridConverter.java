@@ -5,7 +5,6 @@ import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
 import org.bigraphs.model.provider.base.BLocationModelData;
 import org.bigraphs.model.provider.spatial.bigrid.BiGridSupport;
-import org.springframework.beans.factory.annotation.Value;
 import org.swarmwalker.messages.*;
 
 import java.awt.geom.Point2D;
@@ -14,7 +13,7 @@ import java.util.List;
 
 public class BLocationToBiGridConverter {
 
-    private static float DEFAULT_CELL_HEIGHT = 1f;
+    private static final float DEFAULT_CELL_HEIGHT = 1f;
 
     public static BiGrid convert(BLocationModelData modelData) {
         BiGrid.Builder gridBuilder = BiGrid.newBuilder();

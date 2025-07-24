@@ -1,6 +1,6 @@
 # Bigrid Provider Service
 
-Latest Version: `v1.2.0`
+Latest Version: `v1.3.0`
 
 - See how to [Build and Start the Service](#Build-and-Start-the-Service)
 - See [RESTful Web Endpoints](#RESTful-Web-Endpoints) on how to use the service
@@ -241,10 +241,12 @@ $ curl -X POST http://localhost:8080/generate/bigrid \
 
 ## How to Build and Start the Service
 
-**0. Prerequisites:**
+[//]: # (**0. Prerequisites:**)
 
-You have to install this dependency on your system (locally):
-- https://git-st.inf.tu-dresden.de/swarmwalker/protobuf-messages
+[//]: # ()
+[//]: # (You have to install this dependency on your system &#40;locally&#41;:)
+
+[//]: # (- https://git-st.inf.tu-dresden.de/swarmwalker/protobuf-messages)
 
 **1. Building:**
 ```
