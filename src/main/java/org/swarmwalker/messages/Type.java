@@ -97,7 +97,7 @@ public enum Type
   }
   public static com.google.protobuf.Descriptors.EnumDescriptor
       getDescriptor() {
-    return org.swarmwalker.messages.Core.getDescriptor().getEnumTypes().get(1);
+    return Core.getDescriptor().getEnumTypes().get(1);
   }
 
   private static final Type[] VALUES = values();

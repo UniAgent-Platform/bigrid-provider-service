@@ -19,7 +19,7 @@ public interface SizeOrBuilder extends
    * <code>.org.swarmwalker.messages.Unit unit = 1;</code>
    * @return The unit.
    */
-  org.swarmwalker.messages.Unit getUnit();
+  Unit getUnit();
 
   /**
    * <code>float width = 2;</code>

@@ -106,7 +106,7 @@ public enum Unit
   }
   public static com.google.protobuf.Descriptors.EnumDescriptor
       getDescriptor() {
-    return org.swarmwalker.messages.Core.getDescriptor().getEnumTypes().get(0);
+    return Core.getDescriptor().getEnumTypes().get(0);
   }
 
   private static final Unit[] VALUES = values();

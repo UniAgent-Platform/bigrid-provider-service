@@ -12,7 +12,7 @@ package org.swarmwalker.messages;
 public final class Size extends
     com.google.protobuf.GeneratedMessage implements
     // @@protoc_insertion_point(message_implements:org.swarmwalker.messages.Size)
-        SizeOrBuilder {
+    SizeOrBuilder {
 private static final long serialVersionUID = 0L;
   static {
     com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
@@ -33,15 +33,15 @@ private static final long serialVersionUID = 0L;
 
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.swarmwalker.messages.Core.internal_static_org_swarmwalker_messages_Size_descriptor;
+    return Core.internal_static_org_swarmwalker_messages_Size_descriptor;
   }
 
   @Override
   protected FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.swarmwalker.messages.Core.internal_static_org_swarmwalker_messages_Size_fieldAccessorTable
+    return Core.internal_static_org_swarmwalker_messages_Size_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.swarmwalker.messages.Size.class, org.swarmwalker.messages.Size.Builder.class);
+            Size.class, Builder.class);
   }
 
   public static final int UNIT_FIELD_NUMBER = 1;
@@ -57,9 +57,9 @@ private static final long serialVersionUID = 0L;
    * <code>.org.swarmwalker.messages.Unit unit = 1;</code>
    * @return The unit.
    */
-  @Override public org.swarmwalker.messages.Unit getUnit() {
-    org.swarmwalker.messages.Unit result = org.swarmwalker.messages.Unit.forNumber(unit_);
-    return result == null ? org.swarmwalker.messages.Unit.UNRECOGNIZED : result;
+  @Override public Unit getUnit() {
+    Unit result = Unit.forNumber(unit_);
+    return result == null ? Unit.UNRECOGNIZED : result;
   }
 
   public static final int WIDTH_FIELD_NUMBER = 2;
@@ -109,7 +109,7 @@ private static final long serialVersionUID = 0L;
   @Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (unit_ != org.swarmwalker.messages.Unit.Millimeter.getNumber()) {
+    if (unit_ != Unit.Millimeter.getNumber()) {
       output.writeEnum(1, unit_);
     }
     if (Float.floatToRawIntBits(width_) != 0) {
@@ -130,7 +130,7 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (unit_ != org.swarmwalker.messages.Unit.Millimeter.getNumber()) {
+    if (unit_ != Unit.Millimeter.getNumber()) {
       size += com.google.protobuf.CodedOutputStream
         .computeEnumSize(1, unit_);
     }
@@ -156,10 +156,10 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.swarmwalker.messages.Size)) {
+    if (!(obj instanceof Size)) {
       return super.equals(obj);
     }
-    org.swarmwalker.messages.Size other = (org.swarmwalker.messages.Size) obj;
+    Size other = (Size) obj;
 
     if (unit_ != other.unit_) return false;
     if (Float.floatToIntBits(getWidth())
@@ -198,44 +198,44 @@ private static final long serialVersionUID = 0L;
     return hash;
   }
 
-  public static org.swarmwalker.messages.Size parseFrom(
+  public static Size parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.swarmwalker.messages.Size parseFrom(
+  public static Size parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.swarmwalker.messages.Size parseFrom(
+  public static Size parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.swarmwalker.messages.Size parseFrom(
+  public static Size parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.swarmwalker.messages.Size parseFrom(byte[] data)
+  public static Size parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.swarmwalker.messages.Size parseFrom(
+  public static Size parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.swarmwalker.messages.Size parseFrom(java.io.InputStream input)
+  public static Size parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessage
         .parseWithIOException(PARSER, input);
   }
-  public static org.swarmwalker.messages.Size parseFrom(
+  public static Size parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -243,26 +243,26 @@ private static final long serialVersionUID = 0L;
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
-  public static org.swarmwalker.messages.Size parseDelimitedFrom(java.io.InputStream input)
+  public static Size parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessage
         .parseDelimitedWithIOException(PARSER, input);
   }
 
-  public static org.swarmwalker.messages.Size parseDelimitedFrom(
+  public static Size parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessage
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.swarmwalker.messages.Size parseFrom(
+  public static Size parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessage
         .parseWithIOException(PARSER, input);
   }
-  public static org.swarmwalker.messages.Size parseFrom(
+  public static Size parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -275,7 +275,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.swarmwalker.messages.Size prototype) {
+  public static Builder newBuilder(Size prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   @Override
@@ -299,15 +299,15 @@ private static final long serialVersionUID = 0L;
       SizeOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.swarmwalker.messages.Core.internal_static_org_swarmwalker_messages_Size_descriptor;
+      return Core.internal_static_org_swarmwalker_messages_Size_descriptor;
     }
 
     @Override
     protected FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.swarmwalker.messages.Core.internal_static_org_swarmwalker_messages_Size_fieldAccessorTable
+      return Core.internal_static_org_swarmwalker_messages_Size_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.swarmwalker.messages.Size.class, org.swarmwalker.messages.Size.Builder.class);
+              Size.class, Builder.class);
     }
 
     // Construct using org.swarmwalker.messages.Size.newBuilder()
@@ -334,17 +334,17 @@ private static final long serialVersionUID = 0L;
     @Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.swarmwalker.messages.Core.internal_static_org_swarmwalker_messages_Size_descriptor;
+      return Core.internal_static_org_swarmwalker_messages_Size_descriptor;
     }
 
     @Override
-    public org.swarmwalker.messages.Size getDefaultInstanceForType() {
-      return org.swarmwalker.messages.Size.getDefaultInstance();
+    public Size getDefaultInstanceForType() {
+      return Size.getDefaultInstance();
     }
 
     @Override
-    public org.swarmwalker.messages.Size build() {
-      org.swarmwalker.messages.Size result = buildPartial();
+    public Size build() {
+      Size result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -352,14 +352,14 @@ private static final long serialVersionUID = 0L;
     }
 
     @Override
-    public org.swarmwalker.messages.Size buildPartial() {
-      org.swarmwalker.messages.Size result = new org.swarmwalker.messages.Size(this);
+    public Size buildPartial() {
+      Size result = new Size(this);
       if (bitField0_ != 0) { buildPartial0(result); }
       onBuilt();
       return result;
     }
 
-    private void buildPartial0(org.swarmwalker.messages.Size result) {
+    private void buildPartial0(Size result) {
       int from_bitField0_ = bitField0_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
         result.unit_ = unit_;
@@ -377,16 +377,16 @@ private static final long serialVersionUID = 0L;
 
     @Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.swarmwalker.messages.Size) {
-        return mergeFrom((org.swarmwalker.messages.Size)other);
+      if (other instanceof Size) {
+        return mergeFrom((Size)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.swarmwalker.messages.Size other) {
-      if (other == org.swarmwalker.messages.Size.getDefaultInstance()) return this;
+    public Builder mergeFrom(Size other) {
+      if (other == Size.getDefaultInstance()) return this;
       if (other.unit_ != 0) {
         setUnitValue(other.getUnitValue());
       }
@@ -486,16 +486,16 @@ private static final long serialVersionUID = 0L;
      * @return The unit.
      */
     @Override
-    public org.swarmwalker.messages.Unit getUnit() {
-      org.swarmwalker.messages.Unit result = org.swarmwalker.messages.Unit.forNumber(unit_);
-      return result == null ? org.swarmwalker.messages.Unit.UNRECOGNIZED : result;
+    public Unit getUnit() {
+      Unit result = Unit.forNumber(unit_);
+      return result == null ? Unit.UNRECOGNIZED : result;
     }
     /**
      * <code>.org.swarmwalker.messages.Unit unit = 1;</code>
      * @param value The unit to set.
      * @return This builder for chaining.
      */
-    public Builder setUnit(org.swarmwalker.messages.Unit value) {
+    public Builder setUnit(Unit value) {
       if (value == null) { throw new NullPointerException(); }
       bitField0_ |= 0x00000001;
       unit_ = value.getNumber();
@@ -613,12 +613,12 @@ private static final long serialVersionUID = 0L;
   }
 
   // @@protoc_insertion_point(class_scope:org.swarmwalker.messages.Size)
-  private static final org.swarmwalker.messages.Size DEFAULT_INSTANCE;
+  private static final Size DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.swarmwalker.messages.Size();
+    DEFAULT_INSTANCE = new Size();
   }
 
-  public static org.swarmwalker.messages.Size getDefaultInstance() {
+  public static Size getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
@@ -654,7 +654,7 @@ private static final long serialVersionUID = 0L;
   }
 
   @Override
-  public org.swarmwalker.messages.Size getDefaultInstanceForType() {
+  public Size getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

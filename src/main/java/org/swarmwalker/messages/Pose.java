@@ -12,7 +12,7 @@ package org.swarmwalker.messages;
 public final class Pose extends
     com.google.protobuf.GeneratedMessage implements
     // @@protoc_insertion_point(message_implements:org.swarmwalker.messages.Pose)
-        PoseOrBuilder {
+    PoseOrBuilder {
 private static final long serialVersionUID = 0L;
   static {
     com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
@@ -33,15 +33,15 @@ private static final long serialVersionUID = 0L;
 
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.swarmwalker.messages.Core.internal_static_org_swarmwalker_messages_Pose_descriptor;
+    return Core.internal_static_org_swarmwalker_messages_Pose_descriptor;
   }
 
   @Override
   protected FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.swarmwalker.messages.Core.internal_static_org_swarmwalker_messages_Pose_fieldAccessorTable
+    return Core.internal_static_org_swarmwalker_messages_Pose_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.swarmwalker.messages.Pose.class, org.swarmwalker.messages.Pose.Builder.class);
+            Pose.class, Builder.class);
   }
 
   public static final int TYPE_FIELD_NUMBER = 1;
@@ -57,9 +57,9 @@ private static final long serialVersionUID = 0L;
    * <code>.org.swarmwalker.messages.Type type = 1;</code>
    * @return The type.
    */
-  @Override public org.swarmwalker.messages.Type getType() {
-    org.swarmwalker.messages.Type result = org.swarmwalker.messages.Type.forNumber(type_);
-    return result == null ? org.swarmwalker.messages.Type.UNRECOGNIZED : result;
+  @Override public Type getType() {
+    Type result = Type.forNumber(type_);
+    return result == null ? Type.UNRECOGNIZED : result;
   }
 
   public static final int X_FIELD_NUMBER = 2;
@@ -120,7 +120,7 @@ private static final long serialVersionUID = 0L;
   @Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (type_ != org.swarmwalker.messages.Type.Cartesian.getNumber()) {
+    if (type_ != Type.Cartesian.getNumber()) {
       output.writeEnum(1, type_);
     }
     if (Float.floatToRawIntBits(x_) != 0) {
@@ -144,7 +144,7 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (type_ != org.swarmwalker.messages.Type.Cartesian.getNumber()) {
+    if (type_ != Type.Cartesian.getNumber()) {
       size += com.google.protobuf.CodedOutputStream
         .computeEnumSize(1, type_);
     }
@@ -174,10 +174,10 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.swarmwalker.messages.Pose)) {
+    if (!(obj instanceof Pose)) {
       return super.equals(obj);
     }
-    org.swarmwalker.messages.Pose other = (org.swarmwalker.messages.Pose) obj;
+    Pose other = (Pose) obj;
 
     if (type_ != other.type_) return false;
     if (Float.floatToIntBits(getX())
@@ -222,44 +222,44 @@ private static final long serialVersionUID = 0L;
     return hash;
   }
 
-  public static org.swarmwalker.messages.Pose parseFrom(
+  public static Pose parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.swarmwalker.messages.Pose parseFrom(
+  public static Pose parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.swarmwalker.messages.Pose parseFrom(
+  public static Pose parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.swarmwalker.messages.Pose parseFrom(
+  public static Pose parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.swarmwalker.messages.Pose parseFrom(byte[] data)
+  public static Pose parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.swarmwalker.messages.Pose parseFrom(
+  public static Pose parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.swarmwalker.messages.Pose parseFrom(java.io.InputStream input)
+  public static Pose parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessage
         .parseWithIOException(PARSER, input);
   }
-  public static org.swarmwalker.messages.Pose parseFrom(
+  public static Pose parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -267,26 +267,26 @@ private static final long serialVersionUID = 0L;
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
-  public static org.swarmwalker.messages.Pose parseDelimitedFrom(java.io.InputStream input)
+  public static Pose parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessage
         .parseDelimitedWithIOException(PARSER, input);
   }
 
-  public static org.swarmwalker.messages.Pose parseDelimitedFrom(
+  public static Pose parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessage
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.swarmwalker.messages.Pose parseFrom(
+  public static Pose parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessage
         .parseWithIOException(PARSER, input);
   }
-  public static org.swarmwalker.messages.Pose parseFrom(
+  public static Pose parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -299,7 +299,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.swarmwalker.messages.Pose prototype) {
+  public static Builder newBuilder(Pose prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   @Override
@@ -323,15 +323,15 @@ private static final long serialVersionUID = 0L;
       PoseOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.swarmwalker.messages.Core.internal_static_org_swarmwalker_messages_Pose_descriptor;
+      return Core.internal_static_org_swarmwalker_messages_Pose_descriptor;
     }
 
     @Override
     protected FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.swarmwalker.messages.Core.internal_static_org_swarmwalker_messages_Pose_fieldAccessorTable
+      return Core.internal_static_org_swarmwalker_messages_Pose_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.swarmwalker.messages.Pose.class, org.swarmwalker.messages.Pose.Builder.class);
+              Pose.class, Builder.class);
     }
 
     // Construct using org.swarmwalker.messages.Pose.newBuilder()
@@ -359,17 +359,17 @@ private static final long serialVersionUID = 0L;
     @Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.swarmwalker.messages.Core.internal_static_org_swarmwalker_messages_Pose_descriptor;
+      return Core.internal_static_org_swarmwalker_messages_Pose_descriptor;
     }
 
     @Override
-    public org.swarmwalker.messages.Pose getDefaultInstanceForType() {
-      return org.swarmwalker.messages.Pose.getDefaultInstance();
+    public Pose getDefaultInstanceForType() {
+      return Pose.getDefaultInstance();
     }
 
     @Override
-    public org.swarmwalker.messages.Pose build() {
-      org.swarmwalker.messages.Pose result = buildPartial();
+    public Pose build() {
+      Pose result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -377,14 +377,14 @@ private static final long serialVersionUID = 0L;
     }
 
     @Override
-    public org.swarmwalker.messages.Pose buildPartial() {
-      org.swarmwalker.messages.Pose result = new org.swarmwalker.messages.Pose(this);
+    public Pose buildPartial() {
+      Pose result = new Pose(this);
       if (bitField0_ != 0) { buildPartial0(result); }
       onBuilt();
       return result;
     }
 
-    private void buildPartial0(org.swarmwalker.messages.Pose result) {
+    private void buildPartial0(Pose result) {
       int from_bitField0_ = bitField0_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
         result.type_ = type_;
@@ -405,16 +405,16 @@ private static final long serialVersionUID = 0L;
 
     @Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.swarmwalker.messages.Pose) {
-        return mergeFrom((org.swarmwalker.messages.Pose)other);
+      if (other instanceof Pose) {
+        return mergeFrom((Pose)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.swarmwalker.messages.Pose other) {
-      if (other == org.swarmwalker.messages.Pose.getDefaultInstance()) return this;
+    public Builder mergeFrom(Pose other) {
+      if (other == Pose.getDefaultInstance()) return this;
       if (other.type_ != 0) {
         setTypeValue(other.getTypeValue());
       }
@@ -522,16 +522,16 @@ private static final long serialVersionUID = 0L;
      * @return The type.
      */
     @Override
-    public org.swarmwalker.messages.Type getType() {
-      org.swarmwalker.messages.Type result = org.swarmwalker.messages.Type.forNumber(type_);
-      return result == null ? org.swarmwalker.messages.Type.UNRECOGNIZED : result;
+    public Type getType() {
+      Type result = Type.forNumber(type_);
+      return result == null ? Type.UNRECOGNIZED : result;
     }
     /**
      * <code>.org.swarmwalker.messages.Type type = 1;</code>
      * @param value The type to set.
      * @return This builder for chaining.
      */
-    public Builder setType(org.swarmwalker.messages.Type value) {
+    public Builder setType(Type value) {
       if (value == null) { throw new NullPointerException(); }
       bitField0_ |= 0x00000001;
       type_ = value.getNumber();
@@ -681,12 +681,12 @@ private static final long serialVersionUID = 0L;
   }
 
   // @@protoc_insertion_point(class_scope:org.swarmwalker.messages.Pose)
-  private static final org.swarmwalker.messages.Pose DEFAULT_INSTANCE;
+  private static final Pose DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.swarmwalker.messages.Pose();
+    DEFAULT_INSTANCE = new Pose();
   }
 
-  public static org.swarmwalker.messages.Pose getDefaultInstance() {
+  public static Pose getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
@@ -722,7 +722,7 @@ private static final long serialVersionUID = 0L;
   }
 
   @Override
-  public org.swarmwalker.messages.Pose getDefaultInstanceForType() {
+  public Pose getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

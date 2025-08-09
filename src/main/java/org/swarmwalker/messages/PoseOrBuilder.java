@@ -19,7 +19,7 @@ public interface PoseOrBuilder extends
    * <code>.org.swarmwalker.messages.Type type = 1;</code>
    * @return The type.
    */
-  org.swarmwalker.messages.Type getType();
+  Type getType();
 
   /**
    * <code>float x = 2;</code>
