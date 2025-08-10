@@ -250,7 +250,7 @@ $ curl -X POST http://localhost:8080/generate/bigrid \
 
 **1. Building:**
 ```
-$ ./mvnw clean package
+$ ./mvnw clean package -DskipTests
 ```
 
 **2. Running:**

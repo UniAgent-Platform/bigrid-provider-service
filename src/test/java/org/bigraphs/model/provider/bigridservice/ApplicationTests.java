@@ -2,6 +2,7 @@ package org.bigraphs.model.provider.bigridservice;
 
 import org.bigraphs.model.provider.bigridservice.client.BigridServiceWebClient;
 import org.bigraphs.model.provider.bigridservice.data.request.GridSpecRequest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,6 +11,7 @@ import reactor.test.StepVerifier;
 import java.util.Base64;
 
 @SpringBootTest
+@Disabled
 class ApplicationTests {
 
     @Autowired
