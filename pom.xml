@@ -13,9 +13,11 @@
     <version>1.3.1</version>
     <name>bigraphs.bigrid-provider-service</name>
     <description>
-        Reactive RESTful web service for generating parameterizable bigraph-style location models
-        (grids, quadtrees, random points) in JSON or Ecore-compliant XML formats.
-        Ideal for cyber-physical applications and consistency checks.
+        Reactive Spring Boot service for on-demand generation of parameterizable
+        bigraph-style location models — including grids, quadtrees, and random
+        point sets — delivered as JSON or Ecore-compliant XML.
+        Designed for cyber-physical systems, simulation workflows,
+        and rigorous model consistency validation.
     </description>
 
     <url/>

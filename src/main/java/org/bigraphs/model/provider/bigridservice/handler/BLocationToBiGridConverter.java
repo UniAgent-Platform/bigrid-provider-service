@@ -11,6 +11,12 @@ import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Helper class that converts the {@link BLocationModelData}, the standard data structure of this library,
+ * to a protobuf message {@link BiGrid}.
+ *
+ * @author Dominik Grzelak
+ */
 public class BLocationToBiGridConverter {
 
     private static final float DEFAULT_CELL_HEIGHT = 1f;
@@ -64,9 +70,6 @@ public class BLocationToBiGridConverter {
 
         List<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodes = bigraph.getNodes();
 
-        double stepX = stepSizeX;
-        double stepY = stepSizeY;
-
         for (BigraphEntity.NodeEntity<DefaultDynamicControl> locale : nodes) {
             if (!locale.getControl().getNamedType().stringValue().equalsIgnoreCase("Locale")) {
                 continue;
@@ -89,8 +92,8 @@ public class BLocationToBiGridConverter {
                     .setId(id)
                     .setPose(pose)
                     .setSize(Size.newBuilder()
-                            .setWidth((float) stepX)
-                            .setLength((float) stepY)
+                            .setWidth(stepSizeX)
+                            .setLength(stepSizeY)
                             .setHeight(DEFAULT_CELL_HEIGHT)
                             .build())
                     .build();

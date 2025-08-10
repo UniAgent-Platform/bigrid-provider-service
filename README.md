@@ -1,6 +1,6 @@
 # Bigrid Provider Service
 
-Latest Version: `v1.3.0`
+Latest Version: `v1.3.1`
 
 - See [How to Build and Start the Service](#how-to-build-and-start-the-service)
 - See [RESTful Web Endpoints](#RESTful-Web-Endpoints) on how to use the service
@@ -275,7 +275,7 @@ $ java -jar bigrid-provider-service.jar --server.port=9090
 $ java -Dserver.port=9090 -jar bigrid-provider-service.jar
 
 # Environment Variable
-$ export SERVER_PORT=9090
+$ export SERVER_PORT=9090 && java -jar bigrid-provider-service.jar
 ```
 
 **Order of Priority**
