@@ -73,7 +73,14 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
         int cols = parseQueryParamAsInt(request, "cols", 3);
 
         return gridSpecMono.flatMap(gridSpec -> {
-            return getServerResponseMono(format, rows, cols, gridSpec);
+            float resFactor;
+            if (gridSpec.stepSizeX == gridSpec.stepSizeY) {
+                resFactor = gridSpec.stepSizeX;
+            } else {
+                // Diagonal (i.e., the longest "side")
+                resFactor = (float) Math.sqrt(gridSpec.stepSizeX * gridSpec.stepSizeX + gridSpec.stepSizeY * gridSpec.stepSizeY);
+            }
+            return getServerResponseMono(format, rows, cols, resFactor, gridSpec);
         });
     }
 
@@ -81,17 +88,19 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
         String format = request.queryParam("format").orElse("xml");
         int rows = parseQueryParamAsInt(request, "rows", 3);
         int cols = parseQueryParamAsInt(request, "cols", 3);
-        GridSpecRequest gridSpec = new GridSpecRequest(0, 0, 1, 1);
-        return getServerResponseMono(format, rows, cols, gridSpec);
+        float resFactor = 1f;
+        GridSpecRequest gridSpec = new GridSpecRequest(0, 0, resFactor, resFactor);
+        return getServerResponseMono(format, rows, cols, resFactor, gridSpec);
     }
 
-    private Mono<ServerResponse> getServerResponseMono(String format, int rows, int cols, GridSpecRequest gridSpec) {
+    private Mono<ServerResponse> getServerResponseMono(String format, int rows, int cols, float resFactor, GridSpecRequest gridSpec) {
         BLocationModelData bLMD = BLocationModelDataFactory.createGrid(rows, cols,
                 gridSpec.x, gridSpec.y, gridSpec.stepSizeX, gridSpec.stepSizeY);
 
         ResponseData_GenerateGrid response = new ResponseData_GenerateGrid();
         response.setCols(cols);
         response.setRows(rows);
+        response.setResolutionFactor(resFactor);
 
         try {
             if ("xml".equalsIgnoreCase(format)) {

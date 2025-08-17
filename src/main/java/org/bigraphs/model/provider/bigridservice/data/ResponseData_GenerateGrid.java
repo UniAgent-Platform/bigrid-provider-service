@@ -15,4 +15,5 @@ import lombok.Setter;
 public class ResponseData_GenerateGrid extends BaseResponseData {
     private int rows;
     private int cols;
+    private float resolutionFactor;
 }
