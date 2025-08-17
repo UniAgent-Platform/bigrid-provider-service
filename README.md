@@ -229,9 +229,15 @@ $ curl "http://localhost:8080/generate/bigrid?rows=2&cols=2&format=protobuf"
 To adjust the default values:
 
 ```shell
+# Default Parameters (3x3)
 $ curl -X POST http://localhost:8080/generate/bigrid \
   -H "Content-Type: application/json" \
   -d '{"x":0,"y":0,"stepSizeX":1.5,"stepSizeY":2.0}'
+
+# With Parameters
+$ curl -X POST "http://localhost:8080/generate/bigrid?rows=6&cols=6" \
+  -H "Content-Type: application/json" \
+  -d '{"x":0,"y":0,"stepSizeX":0.5,"stepSizeY":0.5}'
 ```
 
 **Arguments:**
@@ -242,13 +248,6 @@ $ curl -X POST http://localhost:8080/generate/bigrid \
 
 
 ## How to Build and Start the Service
-
-[//]: # (**0. Prerequisites:**)
-
-[//]: # ()
-[//]: # (You have to install this dependency on your system &#40;locally&#41;:)
-
-[//]: # (- https://git-st.inf.tu-dresden.de/swarmwalker/protobuf-messages)
 
 **1. Building:**
 ```
