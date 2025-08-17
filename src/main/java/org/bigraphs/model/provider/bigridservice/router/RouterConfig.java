@@ -82,4 +82,13 @@ public class RouterConfig {
                 .POST("/generate/quadtree", handler::createBQuadtree)
                 .build();
     }
+
+    // CDO integration
+
+    @Bean
+    public RouterFunction<ServerResponse> fetch_from_cdo(BiSpatialModelHandler handler) {
+        return RouterFunctions.route()
+                .GET("/fetch/cdo", handler::fetchFromCDO)
+                .build();
+    }
 }

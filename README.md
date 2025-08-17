@@ -30,6 +30,7 @@ Currently supported model types:
 - Lines (Interpolated) – Points generated along interpolated paths with custom step sizes.
 - Convex Shapes – Models generated from a convex polygon defined by an ordered point set.
 - Meta-model Retrieval – Obtain or create the core bigraph meta-model for schema/consistency validation.
+- CDO Repository Fetch – Retrieve existing models directly from a remote CDO server.
 
 #### Ecore-Compliant Models
 
@@ -246,6 +247,20 @@ $ curl -X POST "http://localhost:8080/generate/bigrid?rows=6&cols=6" \
 - Rows (default: `3`): `?rows=3`
 - Columns (default: `3`): `?cols=3`
 
+### Fetch a CDO Model
+
+You can fetch an existing **CDO-based bigraph model** directly from a remote repository.
+This is useful when working with shared models stored in a collaborative EMF/CDO setup.
+
+```shell
+$ curl "http://localhost:8080/fetch/cdo?address=cdo.server:2036&repopath=/my/model/path&format=xml"
+```
+
+**Arguments:**
+
+- Address: `?address=127.0.0.1:2036` — CDO server host and port
+- RepoPath: `?repopath=/system` — Path to the resource in the CDO repository
+- Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
 
 ## How to Build and Start the Service
 

@@ -1,15 +1,23 @@
 package org.bigraphs.model.provider.bigridservice.handler;
 
-import org.bigraphs.framework.core.BigraphFileModelManagement;
+import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.utils.BigraphUtil;
+import org.bigraphs.framework.core.utils.emf.EMFUtils;
 import org.bigraphs.model.provider.base.BLocationModelData;
 import org.bigraphs.model.provider.bigridservice.data.request.ConvexShapeRequest;
 import org.bigraphs.model.provider.bigridservice.data.request.GridSpecRequest;
 import org.bigraphs.model.provider.bigridservice.data.ResponseData_GenerateGrid;
 import org.bigraphs.model.provider.bigridservice.data.request.InterpolationRequest;
+import org.bigraphs.model.provider.bigridservice.util.EcoreXmiUtil;
+import org.bigraphs.model.provider.bigridservice.util.SignatureFromXmi;
 import org.bigraphs.model.provider.spatial.bigrid.*;
 import org.bigraphs.model.provider.spatial.signature.BiSpaceSignatureProvider;
+import org.bigraphs.spring.data.cdo.CdoTemplate;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -19,17 +27,19 @@ import reactor.core.publisher.Mono;
 
 import java.awt.geom.Point2D;
 import java.io.ByteArrayOutputStream;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 
 /**
  * @author Dominik Grzelak
  */
 @Component
 public class BiSpatialModelHandler extends ServiceHandlerSupport {
+
+    @Autowired
+    protected CdoTemplate template;
 
     //------------------------------------------------------------------------------------------------------------------
     // Bi-Spatial Metamodel
@@ -225,5 +235,55 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(Mono.just(response), ResponseData_GenerateGrid.class);
         });
+    }
+
+    public Mono<ServerResponse> fetchFromCDO(ServerRequest request) {
+        String address = request.queryParam("address").orElse("127.0.0.1:2036");
+        String repoPath = request.queryParam("repopath").orElse("repo1");
+        String stepSizeX = request.queryParam("stepSizeX").orElse("1.0");
+        String stepSizeY = request.queryParam("stepSizeY").orElse("1.0");
+        String format = request.queryParam("format").orElse("xml");
+        ResponseData_GenerateGrid response = new ResponseData_GenerateGrid();
+        float resFactor = (float) Math.sqrt(Float.parseFloat(stepSizeX) * Float.parseFloat(stepSizeX) + Float.parseFloat(stepSizeY) * Float.parseFloat(stepSizeY));
+        response.setResolutionFactor(resFactor);
+
+        List<EObject> all = template.findAll(EObject.class, repoPath);
+        EObject eObject = all.get(all.size() - 1);
+
+        EObject copy = EcoreUtil.copy(EMFUtils.getRootContainer(eObject));
+        try {
+            String xmiString = EcoreXmiUtil.toXmiString(copy);
+            DefaultDynamicSignature signatureFromXmi = SignatureFromXmi.createSignatureFromXmi(xmiString);
+
+            if ("xml".equalsIgnoreCase(format)) {
+                response.setMimeType(MediaType.APPLICATION_XML.toString());
+
+                ByteArrayOutputStream textStream = new ByteArrayOutputStream();
+                PureBigraph bigraphLoaded = BigraphUtil.toBigraph(copy.eClass().getEPackage(), copy, signatureFromXmi);
+                BigraphFileModelManagement.Store.exportAsInstanceModel(bigraphLoaded, textStream);
+                response.setContent(textStream.toString());
+            } else if ("json".equalsIgnoreCase(format)) {
+                response.setMimeType(MediaType.APPLICATION_JSON.toString());
+
+                // ToDo
+                String json = "ToDo: BLocationModelDataFactory.toJson(bigraph);";
+                response.setContent(json);
+            } else if ("protobuf".equalsIgnoreCase(format)) {
+                response.setMimeType(MediaType.parseMediaType("application/x-protobuf").toString());
+
+                PureBigraph bigraphLoaded = BigraphUtil.toBigraph(copy.eClass().getEPackage(), copy, signatureFromXmi);
+                BiGrid gridMessage = BLocationToBiGridConverter.convertPureSpatialBigraph(bigraphLoaded, Float.parseFloat(stepSizeX), Float.parseFloat(stepSizeY));
+                byte[] protoBytes = gridMessage.toByteArray();
+                String base64 = Base64.getEncoder().encodeToString(protoBytes);
+                response.setContent(base64);
+            }
+
+            return ServerResponse.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(Mono.just(response), ResponseData_GenerateGrid.class);
+        } catch (Exception e) {
+            return ServerResponse.badRequest().build();
+//            throw new RuntimeException(e);
+        }
     }
 }
