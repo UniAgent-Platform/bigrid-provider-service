@@ -5,7 +5,7 @@ Latest Version: `v1.4.0`
 
 > ✅ For Users: See [Docker](#docker-container) for how to install and run the application as a container.
 >
-> 🧑‍💻 For Developers: See [How to Build and Start the Service](#how-to-build-and-start-the-service) if you want to build and run the service locally.
+> 🧑‍💻 For Developers: See [How to Build and Start the Service](#how-to-build-and-start-the-service) if you want to build and run the service manually.
 > 
 > Usage: See [RESTful Web Endpoints](#RESTful-Web-Endpoints) on how to use the service.
 
@@ -298,7 +298,7 @@ $ java -Dserver.port=9090 -jar bigrid-provider-service.jar
 $ export SERVER_PORT=9090 && java -jar bigrid-provider-service.jar
 ```
 
-**Order of Priority**
+**Order of Priority:**
 
 Spring Boot evaluates properties in this order:
 - Command-line arguments (the highest priority)
@@ -318,11 +318,15 @@ $ docker build -t bigrid-provider-service .
 
 ```shell
 $ docker run -p 8080:8080 bigrid-provider-service
+
+# Allow reaching the host from inside a container
+$ docker run --network=host bigrid-provider-service
 ```
 
 **Change the port (optional):**
+
 ```shell
-docker run -p 9090:9090 \
+$ docker run -p 9090:9090 \
   -e "SPRING_APPLICATION_JSON={\"server.port\":9090}" \
   bigrid-provider-service
 ```
