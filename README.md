@@ -1,9 +1,13 @@
 # Bigrid Provider Service
 
-Latest Version: `v1.3.1`
+Latest Version: `v1.4.0`
 
-- See [How to Build and Start the Service](#how-to-build-and-start-the-service)
-- See [RESTful Web Endpoints](#RESTful-Web-Endpoints) on how to use the service
+
+> ✅ For Users: See [Docker](#docker-container) for how to install and run the application as a container.
+>
+> 🧑‍💻 For Developers: See [How to Build and Start the Service](#how-to-build-and-start-the-service) if you want to build and run the service locally.
+> 
+> Usage: See [RESTful Web Endpoints](#RESTful-Web-Endpoints) on how to use the service.
 
 ## Introduction
 
@@ -304,13 +308,13 @@ Spring Boot evaluates properties in this order:
 
 ## Docker Container
 
-**Build the image:**
+**1. Build the image:**
 
 ```shell
 $ docker build -t bigrid-provider-service .
 ```
 
-**Run the container:**
+**2. Run the container:**
 
 ```shell
 $ docker run -p 8080:8080 bigrid-provider-service
