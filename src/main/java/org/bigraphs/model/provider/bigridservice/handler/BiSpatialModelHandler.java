@@ -242,11 +242,15 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
         String repoPath = request.queryParam("repopath").orElse("repo1");
         String stepSizeX = request.queryParam("stepSizeX").orElse("1.0");
         String stepSizeY = request.queryParam("stepSizeY").orElse("1.0");
+        String resFactorArg = request.queryParam("resFactor").orElse("-1.0");
         String format = request.queryParam("format").orElse("xml");
         ResponseData_GenerateGrid response = new ResponseData_GenerateGrid();
-        float resFactor = (float) Math.sqrt(Float.parseFloat(stepSizeX) * Float.parseFloat(stepSizeX) + Float.parseFloat(stepSizeY) * Float.parseFloat(stepSizeY));
+        float resFactor = Float.parseFloat(resFactorArg);
+        if(resFactor <= 0)
+            resFactor = (float) Math.sqrt(Float.parseFloat(stepSizeX) * Float.parseFloat(stepSizeX) + Float.parseFloat(stepSizeY) * Float.parseFloat(stepSizeY));
         response.setResolutionFactor(resFactor);
-
+        response.setRows(-1);
+        response.setCols(-1);
         List<EObject> all = template.findAll(EObject.class, repoPath);
         EObject eObject = all.get(all.size() - 1);
 
@@ -254,12 +258,12 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
         try {
             String xmiString = EcoreXmiUtil.toXmiString(copy);
             DefaultDynamicSignature signatureFromXmi = SignatureFromXmi.createSignatureFromXmi(xmiString);
+            PureBigraph bigraphLoaded = BigraphUtil.toBigraph(copy.eClass().getEPackage(), copy, signatureFromXmi);
 
             if ("xml".equalsIgnoreCase(format)) {
                 response.setMimeType(MediaType.APPLICATION_XML.toString());
 
                 ByteArrayOutputStream textStream = new ByteArrayOutputStream();
-                PureBigraph bigraphLoaded = BigraphUtil.toBigraph(copy.eClass().getEPackage(), copy, signatureFromXmi);
                 BigraphFileModelManagement.Store.exportAsInstanceModel(bigraphLoaded, textStream);
                 response.setContent(textStream.toString());
             } else if ("json".equalsIgnoreCase(format)) {
@@ -271,7 +275,6 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
             } else if ("protobuf".equalsIgnoreCase(format)) {
                 response.setMimeType(MediaType.parseMediaType("application/x-protobuf").toString());
 
-                PureBigraph bigraphLoaded = BigraphUtil.toBigraph(copy.eClass().getEPackage(), copy, signatureFromXmi);
                 BiGrid gridMessage = BLocationToBiGridConverter.convertPureSpatialBigraph(bigraphLoaded, Float.parseFloat(stepSizeX), Float.parseFloat(stepSizeY));
                 byte[] protoBytes = gridMessage.toByteArray();
                 String base64 = Base64.getEncoder().encodeToString(protoBytes);

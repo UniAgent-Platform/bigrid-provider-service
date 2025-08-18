@@ -254,6 +254,7 @@ This is useful when working with shared models stored in a collaborative EMF/CDO
 
 ```shell
 $ curl "http://localhost:8080/fetch/cdo?address=cdo.server:2036&repopath=/my/model/path&format=xml"
+$ curl "http://localhost:8080/fetch/cdo?address=cdo.server:2036&repopath=/system&resFactor=1.0&format=protobuf"
 ```
 
 **Arguments:**
@@ -273,7 +274,6 @@ $ ./mvnw clean package -DskipTests
 ```shell
 $ java -jar ./bin/bigrid-provider-service.jar
 ```
-
 ### Configuration
 
 | Parameter | Default | Command-Line         | System Property      | Environment Variable      |
@@ -301,6 +301,27 @@ Spring Boot evaluates properties in this order:
 - Environment variables
 - `application.properties`
 - Default configuration (the lowest priority)
+
+## Docker Container
+
+**Build the image:**
+
+```shell
+$ docker build -t bigrid-provider-service .
+```
+
+**Run the container:**
+
+```shell
+$ docker run -p 8080:8080 bigrid-provider-service
+```
+
+**Change the port (optional):**
+```shell
+docker run -p 9090:9090 \
+  -e "SPRING_APPLICATION_JSON={\"server.port\":9090}" \
+  bigrid-provider-service
+```
 
 ## Contributing
 
