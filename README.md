@@ -108,12 +108,8 @@ $ curl -X POST "http://localhost:8080/generate/quadtree?format=xml" \
     }
 }'
 
-#you could test: (4,0.2)  (4,-0.2), in this way, even two points are close, no alarm cuz they split in two area
-#
-#you also could test (1,1)  (4,4),in this way, even two points are far, still alarm cuz they could only in one area
-
-# Set the margin of a point: This decides when to split the cells of the quadtree:
-$ curl -X POST "httdap://localhost:8080/generate/quadtree?marginPoint=0.1&maxTreeDepth=10&format=xml" \
+# Set the margin of a point. This decides when to split the cells of the quadtree:
+$ curl -X POST "httdap://localhost:8080/generate/quadtree?marginPoint=0.1&format=xml" \
 -H "Content-Type: application/json" \
 -d '{
     "boundary": {
