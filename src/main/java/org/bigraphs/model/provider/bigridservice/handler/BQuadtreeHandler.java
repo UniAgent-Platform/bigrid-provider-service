@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Dominik Grzelak
@@ -30,19 +31,32 @@ public class BQuadtreeHandler extends ServiceHandlerSupport {
 
     public Mono<ServerResponse> createBQuadtree(ServerRequest request) {
         String format = request.queryParam("format").orElse("xml");
-        int maxTreeDepth = parseQueryParamAsInt(request, "maxTreeDepth", 4);
+        final int[] maxTreeDepth = {parseQueryParamAsInt(request, "maxTreeDepth", -1)};
         int maxPointsPerLeaf = parseQueryParamAsInt(request, "maxPointsPerLeaf", 1);
+        double marginPoint = parseQueryParamAsDouble(request, "marginPoint", 1.0);
+        if (marginPoint <= 0) {
+            return ServerResponse.badRequest()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(Mono.just(Map.of("error", "marginPoint must be > 0")), Map.class);
+        }
 
         Mono<PointDataWithBoundaryRequest> pointDataMono = request.bodyToMono(PointDataWithBoundaryRequest.class);
 
         return pointDataMono.flatMap(pointBoundaryProduct -> {
-            List<Point2D.Double> pointData = pointBoundaryProduct.getPointData().getPoints();
             QuadtreeImpl.Boundary boundary = pointBoundaryProduct.getBoundary();
-            QuadtreeImpl quadtree = new QuadtreeImpl(boundary, maxPointsPerLeaf, maxTreeDepth);
+            if(maxTreeDepth[0] == -1) {
+                maxTreeDepth[0] = QuadtreeImpl.getMaxTreeDepthFrom(boundary, marginPoint); // choose the limiting axis; never negative
+            }
+
+            List<Point2D.Double> pointData = pointBoundaryProduct.getPointData().getPoints();
+            QuadtreeImpl quadtree = new QuadtreeImpl(boundary, maxPointsPerLeaf, maxTreeDepth[0]);
+            quadtree.setProximityDistance((float) marginPoint);
             List<Point2D.Double> pointsOmitted = new ArrayList<>();
             List<Point2D.Double> pointsAdded = new ArrayList<>();
             if (pointData == null) {
-                return Mono.error(new RuntimeException("PointsData is null!"));
+                return ServerResponse.badRequest()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(Mono.just(Map.of("error", "PointsData is null!")), Map.class);
             }
             pointData.forEach(pt -> {
                 try {
@@ -56,8 +70,8 @@ public class BQuadtreeHandler extends ServiceHandlerSupport {
                 }
             });
 
-            int pointCount = pointData.size();
-            int pointCountOmitted = pointsOmitted.size();
+//            int pointCount = pointData.size();
+//            int pointCountOmitted = pointsOmitted.size();
             QuadtreeConvert converter = new QuadtreeConvert();
             BLocationModelData bLMD = converter.createBLocationModelDataFromQuadtree(quadtree);
 

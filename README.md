@@ -89,7 +89,8 @@ You have to supply points of the form as shown in the example.
 The output format can be specified via the format argument.
 
 ```shell
-$ curl -X POST "http://localhost:8080/generate/quadtree?maxTreeDepth=4&format=xml" \
+# The boundary is a necessary argument
+$ curl -X POST "http://localhost:8080/generate/quadtree?format=xml" \
 -H "Content-Type: application/json" \
 -d '{
     "boundary": {
@@ -107,7 +108,32 @@ $ curl -X POST "http://localhost:8080/generate/quadtree?maxTreeDepth=4&format=xm
     }
 }'
 
+#you could test: (4,0.2)  (4,-0.2), in this way, even two points are close, no alarm cuz they split in two area
+#
+#you also could test (1,1)  (4,4),in this way, even two points are far, still alarm cuz they could only in one area
+
+# Set the margin of a point: This decides when to split the cells of the quadtree:
+$ curl -X POST "httdap://localhost:8080/generate/quadtree?marginPoint=0.1&maxTreeDepth=10&format=xml" \
+-H "Content-Type: application/json" \
+-d '{
+    "boundary": {
+        "x": -5.0,
+        "y": -5.0,
+        "width": 10.0,
+        "height": 10.0
+    },
+    "pointData": {
+          "points": [
+            {"x": 4.0, "y": 0.2},
+            {"x": 4.0, "y": -0.2},
+            {"x": 4.0, "y": -0.1},
+            {"x": 4.0, "y": 0.4}
+          ]
+    }
+}'
+
 # Protobuf Output Format
+# Also: Set the maxTreeDepth manually (otherwise it is automatically computed based on the boundary and point margin
 $ curl -X POST "http://localhost:8080/generate/quadtree?maxTreeDepth=4&format=protobuf" \
 -H "Content-Type: application/json" \
 -d '{
@@ -130,8 +156,10 @@ $ curl -X POST "http://localhost:8080/generate/quadtree?maxTreeDepth=4&format=pr
 **Arguments:**
 
 - Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
-- Configurable max points before subdivision: `?maxTreeDepth=<INT>`
-- Configurable max depth of the quadtree: `?maxPointsPerLeaf=<INT>`
+- Configurable margin around each point: `?marginPoint=<DOUBLE>`
+- Configurable max points before subdivision: `?maxPointsPerLeaf=<INT>`
+- Configurable max depth of the quadtree: `?maxTreeDepth=<INT>`
+  - Is calculated automatically given the `boundary` and `marginPoint`
 
 **Example:**
 
