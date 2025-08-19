@@ -1,6 +1,6 @@
 # Bigrid Provider Service
 
-Latest Version: `v1.4.0`
+Latest Version: `v1.4.1`
 
 
 > ✅ For Users: See [Docker](#docker-container) for how to install and run the application as a container.
