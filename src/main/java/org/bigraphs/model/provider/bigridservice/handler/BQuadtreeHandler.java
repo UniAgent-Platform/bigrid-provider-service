@@ -44,29 +44,31 @@ public class BQuadtreeHandler extends ServiceHandlerSupport {
 
         return pointDataMono.flatMap(pointBoundaryProduct -> {
             QuadtreeImpl.Boundary boundary = pointBoundaryProduct.getBoundary();
-            if(maxTreeDepth[0] == -1) {
+            if (maxTreeDepth[0] == -1) {
                 maxTreeDepth[0] = QuadtreeImpl.getMaxTreeDepthFrom(boundary, marginPoint); // choose the limiting axis; never negative
             }
 
+            List<Point2D.Double> pointsOmitted = new ArrayList<>();
+            List<Point2D.Double> pointsAdded = new ArrayList<>();
             List<Point2D.Double> pointData = pointBoundaryProduct.getPointData().getPoints();
             QuadtreeImpl quadtree = new QuadtreeImpl(boundary, maxPointsPerLeaf, maxTreeDepth[0]);
             quadtree.setProximityDistance((float) marginPoint);
-            List<Point2D.Double> pointsOmitted = new ArrayList<>();
-            List<Point2D.Double> pointsAdded = new ArrayList<>();
+//            quadtree.addListener(new QuadtreeListener() {
+//                @Override
+//                public void onPointRejected(Point2D p0) {
+//                    pointsOmitted.add((Point2D.Double) p0);
+//                }
+//            });
             if (pointData == null) {
                 return ServerResponse.badRequest()
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(Mono.just(Map.of("error", "PointsData is null!")), Map.class);
             }
             pointData.forEach(pt -> {
-                try {
-                    if (!quadtree.insert(pt)) {
-                        pointsOmitted.add(pt);
-                    } else {
-                        pointsAdded.add(pt);
-                    }
-                } catch (Exception e) {
+                if (!quadtree.insert(pt)) {
                     pointsOmitted.add(pt);
+                } else {
+                    pointsAdded.add(pt);
                 }
             });
 

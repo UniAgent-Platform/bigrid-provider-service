@@ -109,7 +109,7 @@ $ curl -X POST "http://localhost:8080/generate/quadtree?format=xml" \
 }'
 
 # Set the margin of a point. This decides when to split the cells of the quadtree:
-$ curl -X POST "httdap://localhost:8080/generate/quadtree?marginPoint=0.1&format=xml" \
+$ curl -X POST "http://localhost:8080/generate/quadtree?marginPoint=0.1&format=xml" \
 -H "Content-Type: application/json" \
 -d '{
     "boundary": {
@@ -121,7 +121,7 @@ $ curl -X POST "httdap://localhost:8080/generate/quadtree?marginPoint=0.1&format
     "pointData": {
           "points": [
             {"x": 4.0, "y": 0.2},
-            {"x": 4.0, "y": -0.2},
+            {"x": 4.0, "y": -0.12},
             {"x": 4.0, "y": -0.1},
             {"x": 4.0, "y": 0.4}
           ]
