@@ -1,7 +1,4 @@
-# Bigrid Provider Service
-
 Latest Version: `v1.4.2`
-
 
 > ✅ For Users: See [Docker](#docker-container) for how to install and run the application as a container.
 >
@@ -9,7 +6,7 @@ Latest Version: `v1.4.2`
 > 
 > Usage: See [RESTful Web Endpoints](#RESTful-Web-Endpoints) on how to use the service.
 
-## Introduction
+# Bigrid Provider Service
 
 **BiGrid Provider Service** is a reactive Spring Boot REST API for generating rich, **bigraph-style spatial location models** — including grids, quadtrees, convex shapes, and interpolated lines.
 
