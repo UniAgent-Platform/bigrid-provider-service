@@ -2,7 +2,7 @@ package org.bigraphs.model.provider.bigridservice.handler;
 
 import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.utils.BigraphUtil;
 import org.bigraphs.framework.core.utils.emf.EMFUtils;
 import org.bigraphs.model.provider.base.BLocationModelData;
@@ -49,12 +49,12 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
 
         try {
             // Step 1: Get signature
-            DefaultDynamicSignature signature = BiSpaceSignatureProvider.getInstance().getSignature();
+            DynamicSignature signature = BiSpaceSignatureProvider.getInstance().getSignature();
 
             // Step 2: Format and respond
             if ("xml".equalsIgnoreCase(format)) {
                 ByteArrayOutputStream xmlStream = new ByteArrayOutputStream();
-                BigraphFileModelManagement.Store.exportAsMetaModel(pureBuilder(signature).createBigraph(), xmlStream);
+                BigraphFileModelManagement.Store.exportAsMetaModel(pureBuilder(signature).create(), xmlStream);
                 String xmlOutput = xmlStream.toString();
 
                 return ServerResponse.ok()
@@ -238,7 +238,7 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
     }
 
     public Mono<ServerResponse> fetchFromCDO(ServerRequest request) {
-        String address = request.queryParam("address").orElse("127.0.0.1:2036");
+        String address = request.queryParam("address").orElse("127.0.0.1:2036"); //TODO
         String repoPath = request.queryParam("repopath").orElse("repo1");
         String stepSizeX = request.queryParam("stepSizeX").orElse("1.0");
         String stepSizeY = request.queryParam("stepSizeY").orElse("1.0");
@@ -252,12 +252,12 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
         response.setRows(-1);
         response.setCols(-1);
         List<EObject> all = template.findAll(EObject.class, repoPath);
-        EObject eObject = all.get(all.size() - 1);
+        EObject eObject = all.getLast();
 
         EObject copy = EcoreUtil.copy(EMFUtils.getRootContainer(eObject));
         try {
             String xmiString = EcoreXmiUtil.toXmiString(copy);
-            DefaultDynamicSignature signatureFromXmi = SignatureFromXmi.createSignatureFromXmi(xmiString);
+            DynamicSignature signatureFromXmi = SignatureFromXmi.createSignatureFromXmi(xmiString);
             PureBigraph bigraphLoaded = BigraphUtil.toBigraph(copy.eClass().getEPackage(), copy, signatureFromXmi);
 
             if ("xml".equalsIgnoreCase(format)) {

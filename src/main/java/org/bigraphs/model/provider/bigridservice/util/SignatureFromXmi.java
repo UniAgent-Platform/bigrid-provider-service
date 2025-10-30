@@ -7,7 +7,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 
 import java.io.ByteArrayInputStream;
@@ -27,7 +27,7 @@ public class SignatureFromXmi {
      *  - arity(control) = max number of immediate <bPorts> children across occurrences
      *  - status(control) = ATOMIC if no immediate <bChild> children in any occurrence, else ACTIVE
      */
-    public static DefaultDynamicSignature createSignatureFromXmi(String xmi) throws Exception {
+    public static DynamicSignature createSignatureFromXmi(String xmi) throws Exception {
         Document doc = parseXml(xmi);
 
         // Stats per control
@@ -53,7 +53,7 @@ public class SignatureFromXmi {
             String ctrl = e.getKey();
             int arity = e.getValue();
             boolean kids = hasImmediateChildren.getOrDefault(ctrl, false);
-            sb.addControl(ctrl, arity, kids ? ControlStatus.ACTIVE : ControlStatus.ATOMIC);
+            sb.add(ctrl, arity, kids ? ControlStatus.ACTIVE : ControlStatus.ATOMIC);
         }
         return sb.create();
     }

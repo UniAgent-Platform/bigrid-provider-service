@@ -2,9 +2,10 @@ package org.bigraphs.model.provider.bigridservice.handler;
 
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
 import org.bigraphs.model.provider.base.BLocationModelData;
 import org.bigraphs.model.provider.spatial.bigrid.BiGridSupport;
+import org.bigraphs.model.provider.spatial.signature.BiSpaceSignatureProvider;
 import org.swarmwalker.messages.*;
 
 import java.awt.geom.Point2D;
@@ -68,10 +69,10 @@ public class BLocationToBiGridConverter {
     public static BiGrid convertPureSpatialBigraph(PureBigraph bigraph, float stepSizeX, float stepSizeY) {
         BiGrid.Builder gridBuilder = BiGrid.newBuilder();
 
-        List<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodes = bigraph.getNodes();
+        List<BigraphEntity.NodeEntity<DynamicControl>> nodes = bigraph.getNodes();
 
-        for (BigraphEntity.NodeEntity<DefaultDynamicControl> locale : nodes) {
-            if (!locale.getControl().getNamedType().stringValue().equalsIgnoreCase("Locale")) {
+        for (BigraphEntity.NodeEntity<DynamicControl> locale : nodes) {
+            if (!locale.getControl().getNamedType().stringValue().equalsIgnoreCase(BiSpaceSignatureProvider.LOCALE_TYPE)) {
                 continue;
             }
 
