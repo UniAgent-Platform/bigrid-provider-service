@@ -7,6 +7,7 @@ import org.bigraphs.model.provider.bigridservice.data.request.PointDataWithBound
 import org.bigraphs.model.provider.bigridservice.data.ResponseData_GenerateQuadtree;
 import org.bigraphs.model.provider.spatial.bigrid.BLocationModelDataFactory;
 import org.bigraphs.model.provider.spatial.bigrid.BiGridProvider;
+import org.bigraphs.model.provider.spatial.quadtree.QuadItem;
 import org.bigraphs.model.provider.spatial.quadtree.impl.QuadtreeConvert;
 import org.bigraphs.model.provider.spatial.quadtree.impl.QuadtreeImpl;
 import org.springframework.http.MediaType;
@@ -65,7 +66,7 @@ public class BQuadtreeHandler extends ServiceHandlerSupport {
                         .body(Mono.just(Map.of("error", "PointsData is null!")), Map.class);
             }
             pointData.forEach(pt -> {
-                if (!quadtree.insert(pt)) {
+                if (!quadtree.insert(QuadItem.create(pt))) {
                     pointsOmitted.add(pt);
                 } else {
                     pointsAdded.add(pt);

@@ -1,4 +1,4 @@
-Latest Version: `v1.4.2`
+Latest Version: `v1.5.0`
 
 > ✅ For Users: See [Docker](#docker-container) for how to install and run the application as a container.
 >
@@ -153,12 +153,6 @@ $ curl -X POST "http://localhost:8080/generate/quadtree?maxTreeDepth=4&format=pr
 - Configurable max points before subdivision: `?maxPointsPerLeaf=<INT>`
 - Configurable max depth of the quadtree: `?maxTreeDepth=<INT>`
   - Is calculated automatically given the `boundary` and `marginPoint`
-
-**Example:**
-
-```shell
-$ curl http://localhost:8080/generate/quadtree?format=json&maxTreeDepth=4&maxPointsPerLeaf=1
-```
 
 ### Interpolate Points
 
