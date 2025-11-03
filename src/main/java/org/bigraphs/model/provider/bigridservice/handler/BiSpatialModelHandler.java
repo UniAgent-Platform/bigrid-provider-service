@@ -214,12 +214,14 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
                     ByteArrayOutputStream textStream = new ByteArrayOutputStream();
                     BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, textStream);
                     response.setContent(textStream.toString());
+
                 } else if ("json".equalsIgnoreCase(format)) {
                     response.setMimeType(MediaType.APPLICATION_JSON.toString());
 
                     // ToDo
                     String json = "ToDo: BLocationModelDataFactory.toJson(bigraph);";
                     response.setContent(json);
+
                 } else if ("protobuf".equalsIgnoreCase(format)) {
                     response.setMimeType(MediaType.parseMediaType("application/x-protobuf").toString());
 
@@ -238,7 +240,7 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
     }
 
     public Mono<ServerResponse> fetchFromCDO(ServerRequest request) {
-        String address = request.queryParam("address").orElse("127.0.0.1:2036"); //TODO
+        String address = request.queryParam("address").orElse("127.0.0.1:2036"); //TODO: update CDO template
         String repoPath = request.queryParam("repopath").orElse("repo1");
         String stepSizeX = request.queryParam("stepSizeX").orElse("1.0");
         String stepSizeY = request.queryParam("stepSizeY").orElse("1.0");

@@ -19,16 +19,35 @@ class ApplicationTests {
 
     @Test
     void contextLoads() {
-        // Verify Spring context starts without error
     }
 
     @Test
-    void testFetchDefaultBigrid() {
+    void testFetchDefaultBigridXMI() {
+        int rows = 2;
+        int cols = 2;
+        String format = "xml";
+
+        StepVerifier.create(
+                        bigridServiceWebClient
+                                .fetchDefaultBigrid(rows, cols, format)
+                                .doOnNext(response -> System.out.println("Response:\n" + response.getContent()))
+                )
+                .expectNextMatches(response ->
+                        response.getCols() == cols &&
+                                response.getRows() == rows &&
+                                response.getContent() != null &&
+                                !response.getContent().isEmpty())
+                .verifyComplete();
+    }
+
+    @Test
+    void testFetchDefaultBigridJson() {
         int rows = 2;
         int cols = 2;
         String format = "json";
 
-        StepVerifier.create(bigridServiceWebClient.fetchDefaultBigrid(rows, cols, format))
+        StepVerifier.create(bigridServiceWebClient.fetchDefaultBigrid(rows, cols, format)
+                        .doOnNext(response -> System.out.println("Response:\n" + response.getContent())))
                 .expectNextMatches(response ->
                         response.getCols() == cols &&
                                 response.getRows() == rows &&
@@ -43,7 +62,7 @@ class ApplicationTests {
         int cols = 2;
         String format = "protobuf";
 
-        StepVerifier.create(bigridServiceWebClient.fetchDefaultBigrid(rows, cols, format))
+        StepVerifier.create(bigridServiceWebClient.fetchDefaultBigrid(rows, cols, format).doOnNext(response -> System.out.println("Response:\n" + response.getContent())))
                 .expectNextMatches(response ->
                         response.getCols() == cols &&
                                 response.getRows() == rows &&
