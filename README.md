@@ -346,6 +346,13 @@ $ docker run -p 9090:9090 \
   bigrid-provider-service
 ```
 
+## Build Configuration
+
+Library mode (JAR without spring-boot plugin):
+```shell
+$ mvn clean install -Plib -DskipTests
+```
+
 ## Contributing
 
 Contributions are welcomed from the open source community! 

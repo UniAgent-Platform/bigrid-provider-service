@@ -52,7 +52,7 @@
 
     <properties>
         <java.version>21</java.version>
-        <bigraph.model-provider.version>1.1.9</bigraph.model-provider.version>
+        <bigraph.model-provider.version>1.1.12</bigraph.model-provider.version>
         <spring.data.cdo.version>0.7.5</spring.data.cdo.version>
     </properties>
 
@@ -69,7 +69,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- Protobut -->
+        <!-- Protobuf -->
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
@@ -136,27 +136,49 @@
         </dependencies>
     </dependencyManagement>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.graalvm.buildtools</groupId>
-                <artifactId>native-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <finalName>bigrid-provider-service</finalName>
-                    <outputDirectory>${project.basedir}/bin</outputDirectory>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <!-- Executable Spring Boot app -->
+        <profile>
+            <id>boot</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <finalName>bigrid-provider-service</finalName>
+                            <outputDirectory>${project.basedir}/bin</outputDirectory>
+                            <excludes>
+                                <exclude>
+                                    <groupId>org.projectlombok</groupId>
+                                    <artifactId>lombok</artifactId>
+                                </exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Library mode: no spring-boot repackaging -->
+        <profile>
+            <id>lib</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
