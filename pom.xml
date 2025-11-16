@@ -10,23 +10,23 @@
     </parent>
     <groupId>org.bigraphs.model.provider</groupId>
     <artifactId>bigrid-provider-service</artifactId>
-    <version>1.5.1-SNAPTSHOT</version>
+    <version>1.5.1</version>
     <name>bigraphs.bigrid-provider-service</name>
     <description>
         Reactive Spring Boot service for on-demand generation of parameterizable
-        bigraph-style location models — including grids, quadtrees, and random
-        point sets — delivered as JSON or Ecore-compliant XML.
+        bigraph-style location models, including grids, quadtrees, and random
+        point sets, delivered as JSON or Ecore-compliant XML.
         Designed for cyber-physical systems, simulation workflows,
         and rigorous model consistency validation.
-        Includes integration with Eclipse Connected Data Objects (CDO) to deliver
-        BiGrid models from a shared model repository.
+        Includes integration with Eclipse Connected Data Objects (CDO) to access
+        bigrid models from a shared model repository.
     </description>
 
     <url/>
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
     <developers>
