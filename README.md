@@ -1,19 +1,21 @@
 Latest Version: `v1.5.1`
 
-> ✅ For Users: See [Docker](#docker-container) for how to install and run the application as a container.
->
-> 🧑‍💻 For Developers: See [How to Build and Start the Service](#how-to-build-and-start-the-service) if you want to build and run the service manually.
+> **For Users:** See [Docker](#docker-container) for how to install and run the application as a container.
 > 
-> Usage: See [RESTful Web Endpoints](#RESTful-Web-Endpoints) on how to use the service.
+> **For Developers:** See [How to Build and Start the Service](#how-to-build-and-start-the-service) if you want to build and run the service manually. This service is also available as a [Java library](#library-build-configuration).
+
+> **API Usage:** See [RESTful Web Endpoints](#RESTful-Web-Endpoints) on how to query the service.
+
+> **Visualize:** Bigrids created with this service can be visualized via https://github.com/UniAgent-Platform/bispace-viewer
 
 # Bigrid Provider Service
 
 **BiGrid Provider Service** is a reactive Spring Boot REST API for generating rich, **bigraph-style spatial location models** — including grids, quadtrees, convex shapes, and interpolated lines.
 
 Models are delivered in multiple formats:
-- **XML** – fully Ecore-compliant bigraph instance or meta-models
-- **JSON** – lightweight, custom serialization
-- **Base64-encoded Protobuf** – compact binary for efficient transmission
+- **XML**: fully Ecore-compliant bigraph instance or meta-models
+- **JSON**: lightweight, custom serialization
+- **Base64-encoded Protobuf**: compact binary for efficient transmission
 
 These location models are ideal for **cyber-physical systems**, simulation workflows, and **formal consistency checks** in reactive bigraph programs, enabling precise spatial reasoning and adaptive behaviors.
 
@@ -21,17 +23,14 @@ These location models are ideal for **cyber-physical systems**, simulation workf
 
 #### Location Models
 
-The service can generate and return parameterizable bigraph-style location models in XML, JSON, or Base64-encoded Protobuf formats.
-
-Currently supported model types:
-
-- Points – Randomly placed within a given boundary.
-- Uniform n×m Grids – Evenly spaced points with configurable origin and step sizes.
-- Quadtrees – Recursive spatial subdivision with a defined boundary.
-- Lines (Interpolated) – Points generated along interpolated paths with custom step sizes.
-- Convex Shapes – Models generated from a convex polygon defined by an ordered point set.
-- Meta-model Retrieval – Obtain or create the core bigraph meta-model for schema/consistency validation.
-- CDO Repository Fetch – Retrieve existing models directly from a remote CDO server.
+The service can generate and return parameterizable bigraph-style location models in XML, JSON, or Base64-encoded Protobuf formats:
+- **Points**: Randomly placed within a given boundary.
+- **Uniform n×m Grids**: Evenly spaced points with configurable origin and step sizes.
+- **Quadtrees**: Recursive spatial subdivision with a defined boundary.
+- **Lines** (Interpolated): Points generated along interpolated paths with custom step sizes.
+- **Convex Shapes**: Models generated from a convex polygon defined by an ordered point set.
+- **Meta-model Retrieval**: Obtain or create the core bigraph meta-model for schema validation.
+- **CDO Repository Fetch**: Retrieve existing models directly from a remote CDO server.
 
 #### Ecore-Compliant Models
 
@@ -52,7 +51,6 @@ $ curl http://localhost:8080/generate/metamodel?format=xml
 This metamodel is required to:
 - Validate location-based bigraph instance models.
 - Enable model-driven tools (e.g., EMF, Eclipse) to work with generated content.
-- Maintain consistency across different cyber-physical space representations.
 
 ### Create Random Points
 
@@ -321,6 +319,14 @@ Spring Boot evaluates properties in this order:
 - `application.properties`
 - Default configuration (the lowest priority)
 
+### Library: Build Configuration
+
+Library mode (JAR without spring-boot plugin):
+
+```shell
+$ mvn clean install -Plib -DskipTests
+```
+
 ## Docker Container
 
 **1. Build the image:**
@@ -344,13 +350,6 @@ $ docker run --network=host bigrid-provider-service
 $ docker run -p 9090:9090 \
   -e "SPRING_APPLICATION_JSON={\"server.port\":9090}" \
   bigrid-provider-service
-```
-
-## Build Configuration
-
-Library mode (JAR without spring-boot plugin):
-```shell
-$ mvn clean install -Plib -DskipTests
 ```
 
 ## Contributing
