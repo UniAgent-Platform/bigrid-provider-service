@@ -258,6 +258,26 @@ $ curl -X POST "http://localhost:8080/generate/bigrid?rows=6&cols=6" \
   -d '{"x":0,"y":0,"stepSizeX":0.5,"stepSizeY":0.5}'
 ```
 
+### Generate a Uniform Bi-Spatial Grid with Directional Route
+
+These endpoints allow you to generate a **uniform grid-based bi-spatial bigraph model with directional route**, which serves as a more detailed spatial structure of discrete locations. Added nodes such as "LeftRoute", "RightRoute", "ForwardRoute" and "BackRoute" to indicate the direction of connections to other Locales.
+
+```shell
+# Acquire directional bigrid metamodel
+curl http://localhost:8080/generate/directional/metamodel
+
+# Generate a default 3x3 directional bigrid
+curl http://localhost:8080/generate/directional/bigrid
+
+# Generate a 4x2 directional bigrid
+curl "http://localhost:8080/generate/directional/bigrid?rows=4&cols=2"
+
+# Directional bigrid with custom parameters
+curl -X POST "http://localhost:8080/generate/directional/bigrid?rows=6&cols=6" \
+  -H "Content-Type: application/json" \
+  -d '{"x":0,"y":0,"stepSizeX":0.5,"stepSizeY":0.5}'
+```
+
 **Arguments:**
 
 - Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
