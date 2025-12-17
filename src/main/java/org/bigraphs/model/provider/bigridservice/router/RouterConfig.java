@@ -65,6 +65,29 @@ public class RouterConfig {
                 .build();
     }
 
+    // Directional Bigrid (with LeftRoute, RightRoute, ForwardRoute, BackRoute)
+
+    @Bean
+    public RouterFunction<ServerResponse> gen_directional_bigrid_metamodel(BiSpatialModelHandler handler) {
+        return RouterFunctions.route()
+                .GET("/generate/directional/metamodel", handler::getOrCreateDirectionalBigraphMetaModel)
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> gen_directional_bigrid_default(BiSpatialModelHandler handler) {
+        return RouterFunctions.route()
+                .GET("/generate/directional/bigrid", handler::createDirectionalBigridDefault)
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> gen_directional_bigrid(BiSpatialModelHandler handler) {
+        return RouterFunctions.route()
+                .POST("/generate/directional/bigrid", handler::createDirectionalBigrid)
+                .build();
+    }
+
     // Interpolation
 
     @Bean

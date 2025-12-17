@@ -14,6 +14,7 @@ import org.bigraphs.model.provider.bigridservice.util.EcoreXmiUtil;
 import org.bigraphs.model.provider.bigridservice.util.SignatureFromXmi;
 import org.bigraphs.model.provider.spatial.bigrid.*;
 import org.bigraphs.model.provider.spatial.signature.BiSpaceSignatureProvider;
+import org.bigraphs.model.provider.spatial.signature.DirectionalBiSpaceSignatureProvider;
 import org.bigraphs.spring.data.cdo.CdoTemplate;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -132,6 +133,109 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
                 byte[] protoBytes = gridMessage.toByteArray();
                 String base64 = Base64.getEncoder().encodeToString(protoBytes);
                 response.setContent(base64);
+            }
+        } catch (Exception e) {
+            return Mono.error(new RuntimeException(e));
+        }
+
+        return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(response), ResponseData_GenerateGrid.class);
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Directional Bi-Spatial Bigrid (with LeftRoute, RightRoute, ForwardRoute, BackRoute)
+    //------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a directional bigrid with POST request containing grid specifications.
+     * Each locale has directional routes (LeftRoute, RightRoute, ForwardRoute, BackRoute)
+     * based on its position in the grid.
+     */
+    public Mono<ServerResponse> createDirectionalBigrid(ServerRequest request) {
+        Mono<GridSpecRequest> gridSpecMono = request.bodyToMono(GridSpecRequest.class);
+        String format = request.queryParam("format").orElse("xml");
+        int rows = parseQueryParamAsInt(request, "rows", 3);
+        int cols = parseQueryParamAsInt(request, "cols", 3);
+
+        return gridSpecMono.flatMap(gridSpec -> {
+            float resFactor;
+            if (gridSpec.stepSizeX == gridSpec.stepSizeY) {
+                resFactor = gridSpec.stepSizeX;
+            } else {
+                resFactor = (float) Math.sqrt(gridSpec.stepSizeX * gridSpec.stepSizeX + gridSpec.stepSizeY * gridSpec.stepSizeY);
+            }
+            return getDirectionalServerResponseMono(format, rows, cols, resFactor, gridSpec);
+        });
+    }
+
+    /**
+     * Creates a directional bigrid with default parameters using GET request.
+     * Default: 3x3 grid with step size 1.0, origin at (0,0).
+     */
+    public Mono<ServerResponse> createDirectionalBigridDefault(ServerRequest request) {
+        String format = request.queryParam("format").orElse("xml");
+        int rows = parseQueryParamAsInt(request, "rows", 3);
+        int cols = parseQueryParamAsInt(request, "cols", 3);
+        float resFactor = 1f;
+        GridSpecRequest gridSpec = new GridSpecRequest(0, 0, resFactor, resFactor);
+        return getDirectionalServerResponseMono(format, rows, cols, resFactor, gridSpec);
+    }
+
+    /**
+     * Get the directional bigraph metamodel.
+     */
+    public Mono<ServerResponse> getOrCreateDirectionalBigraphMetaModel(ServerRequest request) {
+        String format = request.queryParam("format").orElse("xml");
+
+        try {
+            DynamicSignature signature = DirectionalBiSpaceSignatureProvider.getInstance().getSignature();
+
+            if ("xml".equalsIgnoreCase(format)) {
+                ByteArrayOutputStream xmlStream = new ByteArrayOutputStream();
+                BigraphFileModelManagement.Store.exportAsMetaModel(pureBuilder(signature).create(), xmlStream);
+                String xmlOutput = xmlStream.toString();
+
+                return ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_XML)
+                        .bodyValue(xmlOutput);
+            } else {
+                String jsonLike = "ToDo: metaModel.toString()";
+                return ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(jsonLike);
+            }
+        } catch (Exception e) {
+            return Mono.error(new RuntimeException("Failed to create/get directional bigraph meta-model", e));
+        }
+    }
+
+    private Mono<ServerResponse> getDirectionalServerResponseMono(String format, int rows, int cols, float resFactor, GridSpecRequest gridSpec) {
+        BLocationModelData bLMD = BLocationModelDataFactory.createGrid(rows, cols,
+                gridSpec.x, gridSpec.y, gridSpec.stepSizeX, gridSpec.stepSizeY);
+
+        ResponseData_GenerateGrid response = new ResponseData_GenerateGrid();
+        response.setCols(cols);
+        response.setRows(rows);
+        response.setResolutionFactor(resFactor);
+
+        try {
+            if ("xml".equalsIgnoreCase(format)) {
+                response.setMimeType(MediaType.APPLICATION_XML.toString());
+                DirectionalBiGridProvider provider = new DirectionalBiGridProvider(bLMD, rows, cols);
+                PureBigraph bigrid = provider.getBigraph();
+                ByteArrayOutputStream textStream = new ByteArrayOutputStream();
+                BigraphFileModelManagement.Store.exportAsInstanceModel(bigrid, textStream);
+                response.setContent(textStream.toString());
+            } else if ("json".equalsIgnoreCase(format)) {
+                response.setMimeType(MediaType.APPLICATION_JSON.toString());
+                String json = BLocationModelDataFactory.toJson(bLMD);
+                response.setContent(json);
+            } else if ("protobuf".equalsIgnoreCase(format)) {
+                // Note: Protobuf format for directional bigrid is not yet supported
+                // as the BiGrid message schema would need to be updated to include directional routes
+                response.setMimeType(MediaType.parseMediaType("application/x-protobuf").toString());
+                response.setContent("Protobuf format not yet supported for directional bigrid. Please use xml or json format.");
             }
         } catch (Exception e) {
             return Mono.error(new RuntimeException(e));

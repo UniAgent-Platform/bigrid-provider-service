@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.bigraphs.model.provider</groupId>
     <artifactId>bigrid-provider-service</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.2</version>
     <name>bigraphs.bigrid-provider-service</name>
     <description>
         Reactive Spring Boot service for on-demand generation of parameterizable
@@ -52,7 +52,7 @@
 
     <properties>
         <java.version>21</java.version>
-        <bigraph.model-provider.version>1.1.12</bigraph.model-provider.version>
+        <bigraph.model-provider.version>1.2.0</bigraph.model-provider.version>
         <spring.data.cdo.version>0.7.5</spring.data.cdo.version>
     </properties>
 
