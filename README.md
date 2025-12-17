@@ -1,4 +1,4 @@
-Latest Version: `v1.5.1`
+Latest Version: `v1.5.2`
 
 > **For Users:** See [Docker](#docker-container) for how to install and run the application as a container.
 > 
