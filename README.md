@@ -284,6 +284,41 @@ curl -X POST "http://localhost:8080/generate/directional/bigrid?rows=6&cols=6" \
 - Rows (default: `3`): `?rows=3`
 - Columns (default: `3`): `?cols=3`
 
+### Generate a Uniform Bi-Spatial Grid with Diagonal Directional Route
+
+These endpoints allow you to generate a **uniform grid-based bi-spatial bigraph model with 8-directional routes**, which provides the most comprehensive spatial structure including diagonal connections. Added nodes include all cardinal directions ("LeftRoute", "RightRoute", "ForwardRoute", "BackRoute") plus diagonal directions ("ForwardLeftRoute", "ForwardRightRoute", "BackLeftRoute", "BackRightRoute").
+
+```shell
+# Acquire diagonal directional bigrid metamodel
+curl http://localhost:8080/generate/diagonal-directional/metamodel
+
+# Generate a default 3x3 diagonal directional bigrid
+curl http://localhost:8080/generate/diagonal-directional/bigrid
+
+# Generate a 4x2 diagonal directional bigrid
+curl "http://localhost:8080/generate/diagonal-directional/bigrid?rows=4&cols=2"
+
+# Diagonal directional bigrid with custom parameters
+curl -X POST "http://localhost:8080/generate/diagonal-directional/bigrid?rows=6&cols=6" \
+  -H "Content-Type: application/json" \
+  -d '{"x":0,"y":0,"stepSizeX":0.5,"stepSizeY":0.5}'
+```
+
+**Route Count by Position:**
+- Corner positions (e.g., v0 at bottom-right): 3 routes
+- Edge positions: 5 routes
+- Center positions: 8 routes (all directions)
+
+**8 Directions Explained:**
+- **Cardinal (4)**: Forward (↑), Back (↓), Left (←), Right (→)
+- **Diagonal (4)**: ForwardLeft (↖), ForwardRight (↗), BackLeft (↙), BackRight (↘)
+
+**Arguments:**
+
+- Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
+- Rows (default: `3`): `?rows=3`
+- Columns (default: `3`): `?cols=3`
+
 ### Fetch a CDO Model
 
 You can fetch an existing **CDO-based bigraph model** directly from a remote repository.
