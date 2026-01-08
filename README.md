@@ -315,6 +315,34 @@ curl -X POST "http://localhost:8080/generate/diagonal-directional/bigrid?rows=6&
 - Rows (default: `3`): `?rows=3`
 - Columns (default: `3`): `?cols=3`
 
+### Generate a Three-Dimensional Diagonal Directional Bi-Spatial Grid
+
+These endpoints allow you to generate a **3D uniform grid-based bi-spatial bigraph model with diagonal directional routes**, which consists of multiple layers of 2D diagonal directional grids connected vertically. Each locale can connect in up to 10 directions: 8 horizontal directions (4 cardinal + 4 diagonal) plus 2 vertical directions (up and down).
+
+```shell
+# Acquire 3D diagonal directional bigrid metamodel
+curl http://localhost:8080/generate/3d-diagonal-directional/metamodel
+
+# Generate a default 3x3x3 (rows x cols x layers) 3D diagonal directional bigrid
+curl http://localhost:8080/generate/3d-diagonal-directional/bigrid
+
+# Generate a 4x4x5 3D diagonal directional bigrid
+curl "http://localhost:8080/generate/3d-diagonal-directional/bigrid?rows=4&cols=4&layers=5"
+
+# 3D diagonal directional bigrid with custom parameters
+curl -X POST "http://localhost:8080/generate/3d-diagonal-directional/bigrid?rows=5&cols=5&layers=3" \
+  -H "Content-Type: application/json" \
+  -d '{"x":0,"y":0,"z":0,"stepSizeX":1.0,"stepSizeY":1.0,"layerHeight":2.0}'
+```
+
+**Arguments:**
+
+- Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
+- Rows (default: `3`): `?rows=3`
+- Columns (default: `3`): `?cols=3`
+- Layers (default: `3`): `?layers=3`
+- Layer Height: Specified in request body JSON as `layerHeight` (default: 1.0)
+
 ### Fetch a CDO Model
 
 You can fetch an existing **CDO-based bigraph model** directly from a remote repository.

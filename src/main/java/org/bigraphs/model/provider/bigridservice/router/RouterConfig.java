@@ -111,6 +111,29 @@ public class RouterConfig {
                 .build();
     }
 
+    // Three-Dimensional Diagonal Directional Bigrid (3D with 10-directional routes including vertical)
+
+    @Bean
+    public RouterFunction<ServerResponse> gen_3d_diagonal_directional_bigrid_metamodel(BiSpatialModelHandler handler) {
+        return RouterFunctions.route()
+                .GET("/generate/3d-diagonal-directional/metamodel", handler::getOrCreateThreeDimensionalBigraphMetaModel)
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> gen_3d_diagonal_directional_bigrid_default(BiSpatialModelHandler handler) {
+        return RouterFunctions.route()
+                .GET("/generate/3d-diagonal-directional/bigrid", handler::createThreeDimensionalBigridDefault)
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> gen_3d_diagonal_directional_bigrid(BiSpatialModelHandler handler) {
+        return RouterFunctions.route()
+                .POST("/generate/3d-diagonal-directional/bigrid", handler::createThreeDimensionalBigrid)
+                .build();
+    }
+
     // Interpolation
 
     @Bean
