@@ -317,7 +317,7 @@ curl -X POST "http://localhost:8080/generate/diagonal-directional/bigrid?rows=6&
 
 ### Generate a Three-Dimensional Diagonal Directional Bi-Spatial Grid
 
-These endpoints allow you to generate a **3D uniform grid-based bi-spatial bigraph model with diagonal directional routes**, which consists of multiple layers of 2D diagonal directional grids connected vertically. Each locale can connect in up to 10 directions: 8 horizontal directions (4 cardinal + 4 diagonal) plus 2 vertical directions (up and down).
+These endpoints allow you to generate a 3D uniform grid-based bi-spatial bigraph model with diagonal directional routes, which consists of multiple layers of 2D diagonal directional grids connected vertically. Each locale can connect in up to 10 directions: 8 horizontal directions (4 cardinal + 4 diagonal) plus 2 vertical directions (up and down).
 
 ```shell
 # Acquire 3D diagonal directional bigrid metamodel

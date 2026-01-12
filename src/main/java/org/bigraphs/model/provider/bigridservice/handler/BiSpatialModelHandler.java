@@ -13,10 +13,10 @@ import org.bigraphs.model.provider.bigridservice.data.ResponseData_GenerateGrid;
 import org.bigraphs.model.provider.bigridservice.data.request.InterpolationRequest;
 import org.bigraphs.model.provider.bigridservice.util.EcoreXmiUtil;
 import org.bigraphs.model.provider.bigridservice.util.SignatureFromXmi;
-import org.bigraphs.model.provider.bigridservice.spatial.bigrid.DiagonalDirectionalBiGridProvider;
-import org.bigraphs.model.provider.bigridservice.spatial.bigrid.ThreeDimensionalBiGridProvider;
-import org.bigraphs.model.provider.bigridservice.spatial.signature.DiagonalDirectionalBiSpaceSignatureProvider;
-import org.bigraphs.model.provider.bigridservice.spatial.signature.ThreeDimensionalBiSpaceSignatureProvider;
+import org.bigraphs.model.provider.spatial.bigrid.DiagonalDirectionalBiGridProvider;
+import org.bigraphs.model.provider.spatial.bigrid.ThreeDimensionalBiGridProvider;
+import org.bigraphs.model.provider.spatial.signature.DiagonalDirectionalBiSpaceSignatureProvider;
+import org.bigraphs.model.provider.spatial.signature.ThreeDimensionalBiSpaceSignatureProvider;
 import org.bigraphs.model.provider.spatial.bigrid.*;
 import org.bigraphs.model.provider.spatial.signature.BiSpaceSignatureProvider;
 import org.bigraphs.model.provider.spatial.signature.DirectionalBiSpaceSignatureProvider;
@@ -433,7 +433,7 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
             if ("xml".equalsIgnoreCase(format)) {
                 response.setMimeType(MediaType.APPLICATION_XML.toString());
                 ThreeDimensionalBiGridProvider provider = new ThreeDimensionalBiGridProvider(
-                        bLMD, rows, cols, layers, 
+                        bLMD, rows, cols, layers,
                         gridSpec.x, gridSpec.y, gridSpec.z,
                         gridSpec.stepSizeX, gridSpec.stepSizeY, gridSpec.layerHeight);
                 PureBigraph bigrid = provider.getBigraph();
@@ -472,8 +472,8 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
             try {
                 List<Point2D.Float> pointList = convexRequest.getPoints();
                 float stepSize = convexRequest.getStepSize();
-                PureBigraph bigraph = ConvexShapeBuilder.generateAsSingle(
-                        pointList, stepSize, BiGridElementFactory.create()
+                PureBigraph bigraph = ConvexShapeBuilder.generateSingleRoot(
+                        pointList, stepSize, 0.0f, BiGridElementFactory.create()
                 );
 
                 if ("xml".equalsIgnoreCase(format)) {
@@ -564,7 +564,7 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
         String format = request.queryParam("format").orElse("xml");
         ResponseData_GenerateGrid response = new ResponseData_GenerateGrid();
         float resFactor = Float.parseFloat(resFactorArg);
-        if(resFactor <= 0)
+        if (resFactor <= 0)
             resFactor = (float) Math.sqrt(Float.parseFloat(stepSizeX) * Float.parseFloat(stepSizeX) + Float.parseFloat(stepSizeY) * Float.parseFloat(stepSizeY));
         response.setResolutionFactor(resFactor);
         response.setRows(-1);
