@@ -1,16 +1,16 @@
 Latest Version: `v1.5.3`
 
 > **For Users:** See [Docker](#docker-container) for how to install and run the application as a container.
->
-> **For Developers:** See [How to Build and Start the Service](#how-to-build-and-start-the-service) if you want to build and run the service manually. This service is also available as a [Java library](#library-build-configuration).
 
 > **API Usage:** See [RESTful Web Endpoints](#RESTful-Web-Endpoints) on how to query the service.
 
-> **Visualize:** Bigrids created with this service can be visualized via https://github.com/UniAgent-Platform/bispace-viewer
+> **Visualize:** Bi-grids created with this service can be visualized via https://github.com/UniAgent-Platform/bispace-viewer
 
-# Bigrid Provider Service
+> **For Developers:** See [How to Build and Start the Service](#how-to-build-and-start-the-service) if you want to build and run the service manually. This service is also available as a [Java library](#library-build-configuration).
 
-**BiGrid Provider Service** is a reactive Spring Boot REST API for generating rich, **bigraph-style spatial location models** — including grids, quadtrees, convex shapes, and interpolated lines.
+# Bi-Grid Provider Service
+
+**Bi-Grid Provider Service** is a reactive Spring Boot REST API for generating rich, **bigraph-style spatial location models** — including grids, quadtrees, convex shapes, and interpolated lines.
 
 Models are delivered in multiple formats:
 
@@ -263,16 +263,16 @@ $ curl -X POST "http://localhost:8080/generate/bigrid?rows=6&cols=6" \
 These endpoints allow you to generate a **uniform grid-based bi-spatial bigraph model with directional route**, which serves as a more detailed spatial structure of discrete locations. Added nodes such as "LeftRoute", "RightRoute", "ForwardRoute" and "BackRoute" to indicate the direction of connections to other Locales.
 
 ```shell
-# Acquire directional bigrid metamodel
+# Acquire directional bi-grid metamodel
 curl http://localhost:8080/generate/directional/metamodel
 
-# Generate a default 3x3 directional bigrid
+# Generate a default 3x3 directional bi-grid
 curl http://localhost:8080/generate/directional/bigrid
 
-# Generate a 4x2 directional bigrid
+# Generate a 4x2 directional bi-grid
 curl "http://localhost:8080/generate/directional/bigrid?rows=4&cols=2"
 
-# Directional bigrid with custom parameters
+# Directional bi-grid with custom parameters
 curl -X POST "http://localhost:8080/generate/directional/bigrid?rows=6&cols=6" \
   -H "Content-Type: application/json" \
   -d '{"x":0,"y":0,"stepSizeX":0.5,"stepSizeY":0.5}'
@@ -289,16 +289,16 @@ curl -X POST "http://localhost:8080/generate/directional/bigrid?rows=6&cols=6" \
 These endpoints allow you to generate a **uniform grid-based bi-spatial bigraph model with 8-directional routes**, which provides the most comprehensive spatial structure including diagonal connections. Added nodes include all cardinal directions ("LeftRoute", "RightRoute", "ForwardRoute", "BackRoute") plus diagonal directions ("ForwardLeftRoute", "ForwardRightRoute", "BackLeftRoute", "BackRightRoute").
 
 ```shell
-# Acquire diagonal directional bigrid metamodel
+# Acquire diagonal directional bi-grid metamodel
 curl http://localhost:8080/generate/diagonal-directional/metamodel
 
-# Generate a default 3x3 diagonal directional bigrid
+# Generate a default 3x3 diagonal directional bi-grid
 curl http://localhost:8080/generate/diagonal-directional/bigrid
 
-# Generate a 4x2 diagonal directional bigrid
+# Generate a 4x2 diagonal directional bi-grid
 curl "http://localhost:8080/generate/diagonal-directional/bigrid?rows=4&cols=2"
 
-# Diagonal directional bigrid with custom parameters
+# Diagonal directional bi-grid with custom parameters
 curl -X POST "http://localhost:8080/generate/diagonal-directional/bigrid?rows=6&cols=6" \
   -H "Content-Type: application/json" \
   -d '{"x":0,"y":0,"stepSizeX":0.5,"stepSizeY":0.5}'
@@ -320,16 +320,16 @@ curl -X POST "http://localhost:8080/generate/diagonal-directional/bigrid?rows=6&
 These endpoints allow you to generate a 3D uniform grid-based bi-spatial bigraph model with diagonal directional routes, which consists of multiple layers of 2D diagonal directional grids connected vertically. Each locale can connect in up to 10 directions: 8 horizontal directions (4 cardinal + 4 diagonal) plus 2 vertical directions (up and down).
 
 ```shell
-# Acquire 3D diagonal directional bigrid metamodel
+# Acquire 3D diagonal directional bi-grid metamodel
 curl http://localhost:8080/generate/3d-diagonal-directional/metamodel
 
-# Generate a default 3x3x3 (rows x cols x layers) 3D diagonal directional bigrid
+# Generate a default 3x3x3 (rows x cols x layers) 3D diagonal directional bi-grid
 curl http://localhost:8080/generate/3d-diagonal-directional/bigrid
 
-# Generate a 4x4x5 3D diagonal directional bigrid
+# Generate a 4x4x5 3D diagonal directional bi-grid
 curl "http://localhost:8080/generate/3d-diagonal-directional/bigrid?rows=4&cols=4&layers=5"
 
-# 3D diagonal directional bigrid with custom parameters
+# 3D diagonal directional bi-grid with custom parameters
 curl -X POST "http://localhost:8080/generate/3d-diagonal-directional/bigrid?rows=5&cols=5&layers=3" \
   -H "Content-Type: application/json" \
   -d '{"x":0,"y":0,"z":0,"stepSizeX":1.0,"stepSizeY":1.0,"layerHeight":2.0}'
