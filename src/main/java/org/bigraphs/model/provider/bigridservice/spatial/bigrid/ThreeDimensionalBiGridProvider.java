@@ -8,6 +8,7 @@ import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.model.provider.base.BAbstractBigraphProvider;
 import org.bigraphs.model.provider.base.BLocationModelData;
 import org.bigraphs.model.provider.bigridservice.spatial.signature.ThreeDimensionalBiSpaceSignatureProvider;
+import org.bigraphs.model.provider.spatial.bigrid.BiGridSupport;
 
 import java.awt.geom.Point2D;
 import java.util.*;
@@ -166,7 +167,7 @@ public class ThreeDimensionalBiGridProvider extends BAbstractBigraphProvider<Dyn
                     }
 
                     // Create 3D coordinate label
-                    String coordLabel = BiGridSupport3D.formatParamControl3D(xCoord, yCoord, zCoord);
+                    String coordLabel = BiGridSupport.formatParamControl3D(xCoord, yCoord, zCoord);
                     localeNameToOuternameMap.put(localeName, coordLabel);
                     localeNameToBigraphMap.get(localeName).top().linkOuter(coordLabel);
 
