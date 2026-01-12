@@ -8,10 +8,15 @@ import org.bigraphs.framework.core.utils.emf.EMFUtils;
 import org.bigraphs.model.provider.base.BLocationModelData;
 import org.bigraphs.model.provider.bigridservice.data.request.ConvexShapeRequest;
 import org.bigraphs.model.provider.bigridservice.data.request.GridSpecRequest;
+import org.bigraphs.model.provider.bigridservice.data.request.GridSpec3DRequest;
 import org.bigraphs.model.provider.bigridservice.data.ResponseData_GenerateGrid;
 import org.bigraphs.model.provider.bigridservice.data.request.InterpolationRequest;
 import org.bigraphs.model.provider.bigridservice.util.EcoreXmiUtil;
 import org.bigraphs.model.provider.bigridservice.util.SignatureFromXmi;
+import org.bigraphs.model.provider.spatial.bigrid.DiagonalDirectionalBiGridProvider;
+import org.bigraphs.model.provider.spatial.bigrid.ThreeDimensionalBiGridProvider;
+import org.bigraphs.model.provider.spatial.signature.DiagonalDirectionalBiSpaceSignatureProvider;
+import org.bigraphs.model.provider.spatial.signature.ThreeDimensionalBiSpaceSignatureProvider;
 import org.bigraphs.model.provider.spatial.bigrid.*;
 import org.bigraphs.model.provider.spatial.signature.BiSpaceSignatureProvider;
 import org.bigraphs.model.provider.spatial.signature.DirectionalBiSpaceSignatureProvider;
@@ -247,6 +252,213 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
     }
 
     //------------------------------------------------------------------------------------------------------------------
+    // Diagonal Directional Bi-Spatial Bigrid (with 8-directional routes)
+    //------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a diagonal directional bigrid with POST request containing grid specifications.
+     * Each locale has 8-directional routes (cardinal + diagonal directions) based on its position in the grid.
+     */
+    public Mono<ServerResponse> createDiagonalDirectionalBigrid(ServerRequest request) {
+        Mono<GridSpecRequest> gridSpecMono = request.bodyToMono(GridSpecRequest.class);
+        String format = request.queryParam("format").orElse("xml");
+        int rows = parseQueryParamAsInt(request, "rows", 3);
+        int cols = parseQueryParamAsInt(request, "cols", 3);
+
+        return gridSpecMono.flatMap(gridSpec -> {
+            float resFactor;
+            if (gridSpec.stepSizeX == gridSpec.stepSizeY) {
+                resFactor = gridSpec.stepSizeX;
+            } else {
+                resFactor = (float) Math.sqrt(gridSpec.stepSizeX * gridSpec.stepSizeX + gridSpec.stepSizeY * gridSpec.stepSizeY);
+            }
+            return getDiagonalDirectionalServerResponseMono(format, rows, cols, resFactor, gridSpec);
+        });
+    }
+
+    /**
+     * Creates a diagonal directional bigrid with default parameters using GET request.
+     * Default: 3x3 grid with step size 1.0, origin at (0,0).
+     */
+    public Mono<ServerResponse> createDiagonalDirectionalBigridDefault(ServerRequest request) {
+        String format = request.queryParam("format").orElse("xml");
+        int rows = parseQueryParamAsInt(request, "rows", 3);
+        int cols = parseQueryParamAsInt(request, "cols", 3);
+        float resFactor = 1f;
+        GridSpecRequest gridSpec = new GridSpecRequest(0, 0, resFactor, resFactor);
+        return getDiagonalDirectionalServerResponseMono(format, rows, cols, resFactor, gridSpec);
+    }
+
+    /**
+     * Get the diagonal directional bigraph metamodel.
+     */
+    public Mono<ServerResponse> getOrCreateDiagonalDirectionalBigraphMetaModel(ServerRequest request) {
+        String format = request.queryParam("format").orElse("xml");
+
+        try {
+            DynamicSignature signature = DiagonalDirectionalBiSpaceSignatureProvider.getInstance().getSignature();
+
+            if ("xml".equalsIgnoreCase(format)) {
+                ByteArrayOutputStream xmlStream = new ByteArrayOutputStream();
+                BigraphFileModelManagement.Store.exportAsMetaModel(pureBuilder(signature).create(), xmlStream);
+                String xmlOutput = xmlStream.toString();
+
+                return ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_XML)
+                        .bodyValue(xmlOutput);
+            } else {
+                String jsonLike = "ToDo: metaModel.toString()";
+                return ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(jsonLike);
+            }
+        } catch (Exception e) {
+            return Mono.error(new RuntimeException("Failed to create/get diagonal directional bigraph meta-model", e));
+        }
+    }
+
+    private Mono<ServerResponse> getDiagonalDirectionalServerResponseMono(String format, int rows, int cols, float resFactor, GridSpecRequest gridSpec) {
+        BLocationModelData bLMD = BLocationModelDataFactory.createGrid(rows, cols,
+                gridSpec.x, gridSpec.y, gridSpec.stepSizeX, gridSpec.stepSizeY);
+
+        ResponseData_GenerateGrid response = new ResponseData_GenerateGrid();
+        response.setCols(cols);
+        response.setRows(rows);
+        response.setResolutionFactor(resFactor);
+
+        try {
+            if ("xml".equalsIgnoreCase(format)) {
+                response.setMimeType(MediaType.APPLICATION_XML.toString());
+                DiagonalDirectionalBiGridProvider provider = new DiagonalDirectionalBiGridProvider(bLMD, rows, cols);
+                PureBigraph bigrid = provider.getBigraph();
+                ByteArrayOutputStream textStream = new ByteArrayOutputStream();
+                BigraphFileModelManagement.Store.exportAsInstanceModel(bigrid, textStream);
+                response.setContent(textStream.toString());
+            } else if ("json".equalsIgnoreCase(format)) {
+                response.setMimeType(MediaType.APPLICATION_JSON.toString());
+                String json = BLocationModelDataFactory.toJson(bLMD);
+                response.setContent(json);
+            } else if ("protobuf".equalsIgnoreCase(format)) {
+                // Note: Protobuf format for diagonal directional bigrid is not yet supported
+                response.setMimeType(MediaType.parseMediaType("application/x-protobuf").toString());
+                response.setContent("Protobuf format not yet supported for diagonal directional bigrid. Please use xml or json format.");
+            }
+        } catch (Exception e) {
+            return Mono.error(new RuntimeException(e));
+        }
+
+        return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(response), ResponseData_GenerateGrid.class);
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Three-Dimensional Bi-Spatial Bigrid (with 10-directional routes including vertical)
+    //------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a 3D bigrid with POST request containing 3D grid specifications.
+     * Multiple layers of 2D grids connected vertically with UpRoute and DownRoute.
+     */
+    public Mono<ServerResponse> createThreeDimensionalBigrid(ServerRequest request) {
+        Mono<GridSpec3DRequest> gridSpecMono = request.bodyToMono(GridSpec3DRequest.class);
+        String format = request.queryParam("format").orElse("xml");
+        int rows = parseQueryParamAsInt(request, "rows", 3);
+        int cols = parseQueryParamAsInt(request, "cols", 3);
+        int layers = parseQueryParamAsInt(request, "layers", 3);
+
+        return gridSpecMono.flatMap(gridSpec -> {
+            float resFactor;
+            if (gridSpec.stepSizeX == gridSpec.stepSizeY) {
+                resFactor = gridSpec.stepSizeX;
+            } else {
+                resFactor = (float) Math.sqrt(gridSpec.stepSizeX * gridSpec.stepSizeX + gridSpec.stepSizeY * gridSpec.stepSizeY);
+            }
+            return getThreeDimensionalServerResponseMono(format, rows, cols, layers, resFactor, gridSpec);
+        });
+    }
+
+    /**
+     * Creates a 3D bigrid with default parameters using GET request.
+     * Default: 3x3x3 grid with step size 1.0, layer height 1.0, origin at (0,0,0).
+     */
+    public Mono<ServerResponse> createThreeDimensionalBigridDefault(ServerRequest request) {
+        String format = request.queryParam("format").orElse("xml");
+        int rows = parseQueryParamAsInt(request, "rows", 3);
+        int cols = parseQueryParamAsInt(request, "cols", 3);
+        int layers = parseQueryParamAsInt(request, "layers", 3);
+        float resFactor = 1f;
+        GridSpec3DRequest gridSpec = new GridSpec3DRequest(0, 0, 0, resFactor, resFactor, resFactor);
+        return getThreeDimensionalServerResponseMono(format, rows, cols, layers, resFactor, gridSpec);
+    }
+
+    /**
+     * Get the 3D bigraph metamodel.
+     */
+    public Mono<ServerResponse> getOrCreateThreeDimensionalBigraphMetaModel(ServerRequest request) {
+        String format = request.queryParam("format").orElse("xml");
+
+        try {
+            DynamicSignature signature = ThreeDimensionalBiSpaceSignatureProvider.getInstance().getSignature();
+
+            if ("xml".equalsIgnoreCase(format)) {
+                ByteArrayOutputStream xmlStream = new ByteArrayOutputStream();
+                BigraphFileModelManagement.Store.exportAsMetaModel(pureBuilder(signature).create(), xmlStream);
+                String xmlOutput = xmlStream.toString();
+
+                return ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_XML)
+                        .bodyValue(xmlOutput);
+            } else {
+                String jsonLike = "ToDo: metaModel.toString()";
+                return ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(jsonLike);
+            }
+        } catch (Exception e) {
+            return Mono.error(new RuntimeException("Failed to create/get 3D bigraph meta-model", e));
+        }
+    }
+
+    private Mono<ServerResponse> getThreeDimensionalServerResponseMono(String format, int rows, int cols, int layers, float resFactor, GridSpec3DRequest gridSpec) {
+        BLocationModelData bLMD = BLocationModelDataFactory.createGrid(rows, cols,
+                gridSpec.x, gridSpec.y, gridSpec.stepSizeX, gridSpec.stepSizeY);
+
+        ResponseData_GenerateGrid response = new ResponseData_GenerateGrid();
+        response.setCols(cols);
+        response.setRows(rows);
+        response.setResolutionFactor(resFactor);
+
+        try {
+            if ("xml".equalsIgnoreCase(format)) {
+                response.setMimeType(MediaType.APPLICATION_XML.toString());
+                ThreeDimensionalBiGridProvider provider = new ThreeDimensionalBiGridProvider(
+                        bLMD, rows, cols, layers,
+                        gridSpec.x, gridSpec.y, gridSpec.z,
+                        gridSpec.stepSizeX, gridSpec.stepSizeY, gridSpec.layerHeight);
+                PureBigraph bigrid = provider.getBigraph();
+                ByteArrayOutputStream textStream = new ByteArrayOutputStream();
+                BigraphFileModelManagement.Store.exportAsInstanceModel(bigrid, textStream);
+                response.setContent(textStream.toString());
+            } else if ("json".equalsIgnoreCase(format)) {
+                response.setMimeType(MediaType.APPLICATION_JSON.toString());
+                String json = BLocationModelDataFactory.toJson(bLMD);
+                response.setContent(json);
+            } else if ("protobuf".equalsIgnoreCase(format)) {
+                // Note: Protobuf format for 3D bigrid is not yet supported
+                response.setMimeType(MediaType.parseMediaType("application/x-protobuf").toString());
+                response.setContent("Protobuf format not yet supported for 3D bigrid. Please use xml or json format.");
+            }
+        } catch (Exception e) {
+            return Mono.error(new RuntimeException(e));
+        }
+
+        return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(response), ResponseData_GenerateGrid.class);
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
     // Bi-Spatial Bigraph with Convex Shape
     //------------------------------------------------------------------------------------------------------------------
 
@@ -260,8 +472,8 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
             try {
                 List<Point2D.Float> pointList = convexRequest.getPoints();
                 float stepSize = convexRequest.getStepSize();
-                PureBigraph bigraph = ConvexShapeBuilder.generateAsSingle(
-                        pointList, stepSize, BiGridElementFactory.create()
+                PureBigraph bigraph = ConvexShapeBuilder.generateSingleRoot(
+                        pointList, stepSize, 0.0f, BiGridElementFactory.create()
                 );
 
                 if ("xml".equalsIgnoreCase(format)) {
@@ -352,7 +564,7 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
         String format = request.queryParam("format").orElse("xml");
         ResponseData_GenerateGrid response = new ResponseData_GenerateGrid();
         float resFactor = Float.parseFloat(resFactorArg);
-        if(resFactor <= 0)
+        if (resFactor <= 0)
             resFactor = (float) Math.sqrt(Float.parseFloat(stepSizeX) * Float.parseFloat(stepSizeX) + Float.parseFloat(stepSizeY) * Float.parseFloat(stepSizeY));
         response.setResolutionFactor(resFactor);
         response.setRows(-1);

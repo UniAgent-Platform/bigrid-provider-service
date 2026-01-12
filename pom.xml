@@ -52,7 +52,7 @@
 
     <properties>
         <java.version>21</java.version>
-        <bigraph.model-provider.version>1.2.0</bigraph.model-provider.version>
+        <bigraph.model-provider.version>1.2.2</bigraph.model-provider.version>
         <spring.data.cdo.version>0.7.5</spring.data.cdo.version>
     </properties>
 
