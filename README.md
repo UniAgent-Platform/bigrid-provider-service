@@ -12,7 +12,7 @@ Models are delivered in multiple formats:
 
 - **XML**: Ecore-compliant instance and meta-models (see [here](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel))
 - **JSON**: lightweight, custom serialization
-- **Base64-encoded Protobuf**: compact binary for efficient transmission
+- **Base64-encoded Protobuf**: compact binary for efficient transmission (see [here](https://github.com/UniAgent-Platform/swarmwalker.protobuf-messages))
 
 These location models are ideal for simulations of cyber-physical systems, and bigraphical reactive systems, enabling precise spatial reasoning.
 
