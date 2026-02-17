@@ -6,7 +6,7 @@
 
 # Bi-grid Provider Service
 
-*Bi-grid Provider Service* is a reactive Spring Boot REST API for generating rich, *bigraphical* spatial location models, including grids, quadtrees, convex shapes, and interpolated lines.
+*Bi-grid Provider Service* is a reactive Spring Boot REST API for generating *bigraphical* spatial location models, including grids, quadtrees, convex shapes, and interpolated lines.
 
 Models are delivered in multiple formats:
 
