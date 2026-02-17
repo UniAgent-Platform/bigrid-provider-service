@@ -1,8 +1,6 @@
 # How to Contribute
 
-Thank you for your interest in contributing to the Bigraph Toolkit Suite.
-Your involvement helps us build a robust, research-friendly, and extensible framework for modeling and analyzing systems
-using bigraphs.
+Thank you for your interest in contributing to UniAgent.
 
 Whether you're fixing bugs, improving documentation, or developing new features, we greatly appreciate your help.
 
@@ -13,7 +11,7 @@ Before contributing, please check out the following resources:
 
 ## Submitting Changes
 
-To contribute code, submit a **GitHub Pull Request** to this repository with a clear explanation of your changes.
+To contribute code, submit a *GitHub Pull Request* to this repository with a clear explanation of your changes.
 
 > Tip: Smaller, focused PRs are easier to review and merge.
 
@@ -43,12 +41,12 @@ Please follow these basic conventions:
     - Put spaces around operators: x += 1, not x+=1.
     - Add whitespace around map arrows and binary operators.
 - Comments: Favor clear, precise comments that explain why something is done, especially in formal or algorithmic parts.
-- Design: Aim for modular, testable code with minimal side effects. When adding new classes or features, consider where they fit in the bigraph meta-model.
+- Design: Aim for modular, testable code with minimal side effects.
 
 ## Tests & Coverage
 
 - If you fix a bug, add a regression test.
 - If you add functionality, include unit tests that illustrate typical usage.
-- We use [JUnit](https://junit.org/) for testing and expect all tests to pass before merging.
+- We use [JUnit Jupiter](https://junit.org/) for Jupiter based testing. We expect all tests to pass before merging.
 
 Thanks!
