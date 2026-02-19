@@ -1,5 +1,6 @@
 package org.bigraphs.model.provider.bigridservice.handler;
 
+import lombok.Synchronized;
 import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
@@ -11,6 +12,7 @@ import org.bigraphs.model.provider.bigridservice.data.request.GridSpecRequest;
 import org.bigraphs.model.provider.bigridservice.data.request.GridSpec3DRequest;
 import org.bigraphs.model.provider.bigridservice.data.ResponseData_GenerateGrid;
 import org.bigraphs.model.provider.bigridservice.data.request.InterpolationRequest;
+import org.bigraphs.model.provider.bigridservice.util.CdoTemplateProvider;
 import org.bigraphs.model.provider.bigridservice.util.EcoreXmiUtil;
 import org.bigraphs.model.provider.bigridservice.util.SignatureFromXmi;
 import org.bigraphs.model.provider.spatial.bigrid.DiagonalDirectionalBiGridProvider;
@@ -23,7 +25,6 @@ import org.bigraphs.model.provider.spatial.signature.DirectionalBiSpaceSignature
 import org.bigraphs.spring.data.cdo.CdoTemplate;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -33,6 +34,7 @@ import reactor.core.publisher.Mono;
 
 import java.awt.geom.Point2D;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,12 +46,10 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 @Component
 public class BiSpatialModelHandler extends ServiceHandlerSupport {
 
-    @Autowired
-    protected CdoTemplate template;
+    protected final CdoTemplateProvider cdoTemplateProvider = new CdoTemplateProvider();
 
-    //------------------------------------------------------------------------------------------------------------------
-    // Bi-Spatial Metamodel
-    //------------------------------------------------------------------------------------------------------------------
+    // Bi-spatial Metamodel
+
     public Mono<ServerResponse> getOrCreateBigraphMetaModel(ServerRequest request) {
         String format = request.queryParam("format").orElse("xml");
 
@@ -78,9 +78,7 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
         }
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-    // Bi-Spatial Bigrid
-    //------------------------------------------------------------------------------------------------------------------
+    // Bi-spatial Bi-grid
 
     public Mono<ServerResponse> createUniformBigrid(ServerRequest request) {
         Mono<GridSpecRequest> gridSpecMono = request.bodyToMono(GridSpecRequest.class);
@@ -148,9 +146,7 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
                 .body(Mono.just(response), ResponseData_GenerateGrid.class);
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-    // Directional Bi-Spatial Bigrid (with LeftRoute, RightRoute, ForwardRoute, BackRoute)
-    //------------------------------------------------------------------------------------------------------------------
+    // Directional Bi-spatial Bi-grid (with LeftRoute, RightRoute, ForwardRoute, BackRoute)
 
     /**
      * Creates a directional bigrid with POST request containing grid specifications.
@@ -458,9 +454,7 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
                 .body(Mono.just(response), ResponseData_GenerateGrid.class);
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-    // Bi-Spatial Bigraph with Convex Shape
-    //------------------------------------------------------------------------------------------------------------------
+    // Bi-spatial Structures as Convex Shapes
 
     public Mono<ServerResponse> createConvexShape(ServerRequest request) {
         String format = request.queryParam("format").orElse("xml");
@@ -505,9 +499,7 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
         });
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // Interpolation
-    // -----------------------------------------------------------------------------------------------------------------
+    // Bi-spatial Structures by Interpolation
 
     public Mono<ServerResponse> createInterpolatedBigraph(ServerRequest request) {
         Mono<InterpolationRequest> inputMono = request.bodyToMono(InterpolationRequest.class);
@@ -555,12 +547,13 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
         });
     }
 
+    @Synchronized
     public Mono<ServerResponse> fetchFromCDO(ServerRequest request) {
-        String address = request.queryParam("address").orElse("127.0.0.1:2036"); //TODO: update CDO template
-        String repoPath = request.queryParam("repopath").orElse("repo1");
+        String address = request.queryParam("address").orElse("cdo://127.0.0.1:2036/repo1"); //TODO: update CDO template
+        String repoPath = request.queryParam("repopath").orElse("/topo");
         String stepSizeX = request.queryParam("stepSizeX").orElse("1.0");
         String stepSizeY = request.queryParam("stepSizeY").orElse("1.0");
-        String resFactorArg = request.queryParam("resFactor").orElse("-1.0");
+        String resFactorArg = request.queryParam("scaleFactor").orElse("-1.0");
         String format = request.queryParam("format").orElse("xml");
         ResponseData_GenerateGrid response = new ResponseData_GenerateGrid();
         float resFactor = Float.parseFloat(resFactorArg);
@@ -569,7 +562,10 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
         response.setResolutionFactor(resFactor);
         response.setRows(-1);
         response.setCols(-1);
-        List<EObject> all = template.findAll(EObject.class, repoPath);
+
+        var key = new CdoTemplateProvider.Key(address, repoPath);
+        CdoTemplate cdoTemplate = cdoTemplateProvider.get(key);
+        List<EObject> all = cdoTemplate.findAll(EObject.class, repoPath);
         EObject eObject = all.getLast();
 
         EObject copy = EcoreUtil.copy(EMFUtils.getRootContainer(eObject));
@@ -584,6 +580,11 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
                 ByteArrayOutputStream textStream = new ByteArrayOutputStream();
                 BigraphFileModelManagement.Store.exportAsInstanceModel(bigraphLoaded, textStream);
                 response.setContent(textStream.toString());
+                try {
+                    textStream.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             } else if ("json".equalsIgnoreCase(format)) {
                 response.setMimeType(MediaType.APPLICATION_JSON.toString());
 
@@ -603,8 +604,7 @@ public class BiSpatialModelHandler extends ServiceHandlerSupport {
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(Mono.just(response), ResponseData_GenerateGrid.class);
         } catch (Exception e) {
-            return ServerResponse.badRequest().build();
-//            throw new RuntimeException(e);
+            return ServerResponse.badRequest().bodyValue(e.toString());
         }
     }
 }
