@@ -53,183 +53,6 @@ This metamodel is required to:
 - Validate location-based bigraph instance models.
 - Enable model-driven tools (e.g., EMF, Eclipse) to work with generated content.
 
-### Create Random Points
-
-Within a default 2D rectangle (boundary) from (0,0) to (10,10):
-
-```shell
-$ curl "http://localhost:8080/generate/points/random?pointCount=10" \
--H "Content-Type: application/json"
-```
-
-Within a given rectangular boundary:
-
-```shell
-$ curl -X POST "http://localhost:8080/generate/points/random?pointCount=15" \
--H "Content-Type: application/json" \
--d '{
-    "x": 0.0,
-    "y": 0.0,
-    "width": 15.0,
-    "height": 15.0
-}'
-```
-
-Arguments:
-`?pointCount=<INT>`: maximum number of points to generate
-
-### Create a Quadtree
-
-You have to supply points of the form as shown in the example.
-The output format can be specified via the format argument.
-
-```shell
-# The boundary is a necessary argument
-$ curl -X POST "http://localhost:8080/generate/quadtree?format=xml" \
--H "Content-Type: application/json" \
--d '{
-    "boundary": {
-        "x": 0.0,
-        "y": 0.0,
-        "width": 10.0,
-        "height": 10.0
-    },
-    "pointData": {
-          "points": [
-            {"x": 0.2, "y": 0.2},
-            {"x": 1.0, "y": 2.0},
-            {"x": 3.0, "y": 4.0}
-          ]
-    }
-}'
-
-# Set the margin of a point. This decides when to split the cells of the quadtree:
-$ curl -X POST "http://localhost:8080/generate/quadtree?marginPoint=0.1&format=xml" \
--H "Content-Type: application/json" \
--d '{
-    "boundary": {
-        "x": -5.0,
-        "y": -5.0,
-        "width": 10.0,
-        "height": 10.0
-    },
-    "pointData": {
-          "points": [
-            {"x": 4.0, "y": 0.2},
-            {"x": 4.0, "y": -0.12},
-            {"x": 4.0, "y": -0.1},
-            {"x": 4.0, "y": 0.4}
-          ]
-    }
-}'
-
-# Protobuf Output Format
-# Also: Set the maxTreeDepth manually (otherwise it is automatically computed based on the boundary and point margin
-$ curl -X POST "http://localhost:8080/generate/quadtree?maxTreeDepth=4&format=protobuf" \
--H "Content-Type: application/json" \
--d '{
-    "boundary": {
-        "x": 0.0,
-        "y": 0.0,
-        "width": 10.0,
-        "height": 10.0
-    },
-    "pointData": {
-          "points": [
-            {"x": 0.2, "y": 0.2},
-            {"x": 1.0, "y": 2.0},
-            {"x": 3.0, "y": 4.0}
-          ]
-    }
-}'
-```
-
-**Arguments:**
-
-- Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
-- Configurable margin around each point: `?marginPoint=<DOUBLE>`
-- Configurable max points before subdivision: `?maxPointsPerLeaf=<INT>`
-- Configurable max depth of the quadtree: `?maxTreeDepth=<INT>`
-  - Is calculated automatically given the `boundary` and `marginPoint`
-
-### Interpolate Points
-
-```shell
-$ curl -X POST http://localhost:8080/generate/interpolated?format=xml \
-  -H "Content-Type: application/json" \
-  -d '{
-    "points": [
-        {"x": 0, "y": 0},
-        {"x": 1, "y": 1},
-        {"x": 2, "y": 2}
-    ],
-    "stepSizeX": 0.25,
-    "stepSizeY": 0.25
-  }'
-  
-# Protobuf Messages format
-$ curl -X POST http://localhost:8080/generate/interpolated?format=protobuf \
-  -H "Content-Type: application/json" \
-  -d '{
-    "points": [
-        {"x": 0, "y": 0},
-        {"x": 1, "y": 1},
-        {"x": 2, "y": 2}
-    ],
-    "stepSizeX": 0.25,
-    "stepSizeY": 0.25
-  }'
-```
-
-**Arguments:**
-
-- Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
-
-### Generate a Bi-spatial Convex Shape
-
-This endpoint creates a bi-spatial bigraph model based on a custom list of 2D points that define a convex polygon.
-The interior of the shape is rasterized using a specified step size, and a spatial location node is generated for each rasterized point.
-
-This generates a convex bi-spatial structure from a list of polygon vertices:
-
-```shell
-$ curl -X POST http://localhost:8080/generate/convex \
-  -H "Content-Type: application/json" \
-  -d '{
-        "stepSize": 0.25,
-        "points": [
-          { "x": 0.0, "y": 0.0 },
-          { "x": -1.24, "y": 0.58 },
-          { "x": 2.86, "y": 2.93 },
-          { "x": 3.08, "y": 0.0 }
-        ]
-      }'
-    
-# Protobuf Messages format
-$ curl -X POST http://localhost:8080/generate/convex?format=protobuf \
-  -H "Content-Type: application/json" \
-  -d '{
-        "stepSize": 0.25,
-        "points": [
-          { "x": 0.0, "y": 0.0 },
-          { "x": -1.24, "y": 0.58 },
-          { "x": 2.86, "y": 2.93 },
-          { "x": 3.08, "y": 0.0 }
-        ]
-      }'
-```
-
-**Arguments:**
-
-- Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
-- Step Size (required): included in body → `"stepSize": 0.25`
-
-**Use Cases:**
-
-- Defining irregular regions of interest in a spatial simulation.
-- Modeling bounded areas in drone or robot navigation maps.
-- Loading custom-shaped digital twin spaces into your application.
-
 ### Generate a Bi-spatial Grid
 
 These endpoints allow you to generate a *uniform grid-based bi-spatial bigraph model*, which serves as a spatial structure of discrete locations. The grid can be used as a base layout for simulation, visualization, or as part of a digital twin model.
@@ -341,6 +164,185 @@ curl -X POST "http://localhost:8080/generate/3d-diagonal-directional/bigrid?rows
 - Layers (default: `3`): `?layers=3`
 - Layer Height: Specified in request body JSON as `layerHeight` (default: 1.0)
 
+### Create Random Points
+
+Within a default 2D rectangle (boundary) from (0,0) to (10,10):
+
+```shell
+$ curl "http://localhost:8080/generate/points/random?pointCount=10" \
+-H "Content-Type: application/json"
+```
+
+Within a given rectangular boundary:
+
+```shell
+$ curl -X POST "http://localhost:8080/generate/points/random?pointCount=15" \
+-H "Content-Type: application/json" \
+-d '{
+    "x": 0.0,
+    "y": 0.0,
+    "width": 15.0,
+    "height": 15.0
+}'
+```
+
+Arguments:
+`?pointCount=<INT>`: maximum number of points to generate
+
+
+### Generate a Bi-spatial Convex Shape
+
+This endpoint creates a bi-spatial bigraph model based on a custom list of 2D points that define a convex polygon.
+The interior of the shape is rasterized using a specified step size, and a spatial location node is generated for each rasterized point.
+
+This generates a convex bi-spatial structure from a list of polygon vertices:
+
+```shell
+$ curl -X POST http://localhost:8080/generate/convex \
+  -H "Content-Type: application/json" \
+  -d '{
+        "stepSize": 0.25,
+        "points": [
+          { "x": 0.0, "y": 0.0 },
+          { "x": -1.24, "y": 0.58 },
+          { "x": 2.86, "y": 2.93 },
+          { "x": 3.08, "y": 0.0 }
+        ]
+      }'
+    
+# Protobuf Messages format
+$ curl -X POST http://localhost:8080/generate/convex?format=protobuf \
+  -H "Content-Type: application/json" \
+  -d '{
+        "stepSize": 0.25,
+        "points": [
+          { "x": 0.0, "y": 0.0 },
+          { "x": -1.24, "y": 0.58 },
+          { "x": 2.86, "y": 2.93 },
+          { "x": 3.08, "y": 0.0 }
+        ]
+      }'
+```
+
+**Arguments:**
+
+- Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
+- Step Size (required): included in body → `"stepSize": 0.25`
+
+**Use Cases:**
+
+- Defining irregular regions of interest in a spatial simulation.
+- Modeling bounded areas in drone or robot navigation maps.
+- Loading custom-shaped digital twin spaces into your application.
+
+### Interpolate Points
+
+```shell
+$ curl -X POST http://localhost:8080/generate/interpolated?format=xml \
+  -H "Content-Type: application/json" \
+  -d '{
+    "points": [
+        {"x": 0, "y": 0},
+        {"x": 1, "y": 1},
+        {"x": 2, "y": 2}
+    ],
+    "stepSizeX": 0.25,
+    "stepSizeY": 0.25
+  }'
+  
+# Protobuf Messages format
+$ curl -X POST http://localhost:8080/generate/interpolated?format=protobuf \
+  -H "Content-Type: application/json" \
+  -d '{
+    "points": [
+        {"x": 0, "y": 0},
+        {"x": 1, "y": 1},
+        {"x": 2, "y": 2}
+    ],
+    "stepSizeX": 0.25,
+    "stepSizeY": 0.25
+  }'
+```
+
+**Arguments:**
+
+- Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
+
+
+### Create a Quadtree
+
+You have to supply points of the form as shown in the example.
+The output format can be specified via the format argument.
+
+```shell
+# The boundary is a necessary argument
+$ curl -X POST "http://localhost:8080/generate/quadtree?format=xml" \
+-H "Content-Type: application/json" \
+-d '{
+    "boundary": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 10.0,
+        "height": 10.0
+    },
+    "pointData": {
+          "points": [
+            {"x": 0.2, "y": 0.2},
+            {"x": 1.0, "y": 2.0},
+            {"x": 3.0, "y": 4.0}
+          ]
+    }
+}'
+
+# Set the margin of a point. This decides when to split the cells of the quadtree:
+$ curl -X POST "http://localhost:8080/generate/quadtree?marginPoint=0.1&format=xml" \
+-H "Content-Type: application/json" \
+-d '{
+    "boundary": {
+        "x": -5.0,
+        "y": -5.0,
+        "width": 10.0,
+        "height": 10.0
+    },
+    "pointData": {
+          "points": [
+            {"x": 4.0, "y": 0.2},
+            {"x": 4.0, "y": -0.12},
+            {"x": 4.0, "y": -0.1},
+            {"x": 4.0, "y": 0.4}
+          ]
+    }
+}'
+
+# Protobuf Output Format
+# Also: Set the maxTreeDepth manually (otherwise it is automatically computed based on the boundary and point margin
+$ curl -X POST "http://localhost:8080/generate/quadtree?maxTreeDepth=4&format=protobuf" \
+-H "Content-Type: application/json" \
+-d '{
+    "boundary": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 10.0,
+        "height": 10.0
+    },
+    "pointData": {
+          "points": [
+            {"x": 0.2, "y": 0.2},
+            {"x": 1.0, "y": 2.0},
+            {"x": 3.0, "y": 4.0}
+          ]
+    }
+}'
+```
+
+**Arguments:**
+
+- Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
+- Configurable margin around each point: `?marginPoint=<DOUBLE>`
+- Configurable max points before subdivision: `?maxPointsPerLeaf=<INT>`
+- Configurable max depth of the quadtree: `?maxTreeDepth=<INT>`
+    - Is calculated automatically given the `boundary` and `marginPoint`
+
 ### Fetch a CDO Model
 
 You can fetch an existing *CDO-based bigraph model* directly from a remote repository.
@@ -356,6 +358,7 @@ $ curl "http://localhost:8080/fetch/cdo?address=cdo.server:2036&repopath=/system
 - Address: `?address=127.0.0.1:2036` — CDO server host and port
 - RepoPath: `?repopath=/system` — Path to the resource in the CDO repository
 - Format: `?format=xml` (Default), `?format=json`, `?format=protobuf`
+
 
 ## How to Build and Start the Service
 
